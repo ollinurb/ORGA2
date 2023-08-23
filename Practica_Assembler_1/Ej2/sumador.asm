@@ -2,12 +2,15 @@ section .text
 global _start
 
 _start:
-	MOV EAX, num1
-	MOV EBX, num2
-	ADD EAX, EBX
-	MOV EDX, 4
-	int 0x80
+	MOV CL, [num1]
+	MOV DL, 0x01
+	ADD CL, DL
 
-section .data
- num1 db 0x0001
- num2 db 0x000a
+	;exit the program
+	MOV EAX, 1
+	XOR EBX, EBX
+	INT 0x80
+
+_data:
+	num1 db 0xFF
+	

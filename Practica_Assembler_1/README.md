@@ -1,4 +1,4 @@
-#Instrucciones bÃsicas para tener a mano
+#Instrucciones bï¿½sicas para tener a mano
 
 - Ensamblar: `nasm -f elf64 -g -F DWARF ejemplo.asm`
 - Linkear: `ld -o ejemplo ejemplo.o`
@@ -8,3 +8,4 @@
 Reemplazar ejemplo por el nombre del archivo.
 
 
+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

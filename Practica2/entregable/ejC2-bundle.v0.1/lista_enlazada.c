@@ -22,10 +22,10 @@ uint32_t longitud(lista_t* lista) {
 
 void agregar_al_final(lista_t* lista, uint32_t* arreglo, uint64_t longitud) {
 	uint32_t * dir_cp_arreglo = malloc(longitud * sizeof(uint32_t));
-	memcpy(dir_cp_arreglo, arreglo, longitud * sizeof(uint32_t)); //el tamaño es sizeof(uint32_t) o es longitud*sizeof(uint32_t)
+	memcpy(dir_cp_arreglo, arreglo, longitud * sizeof(uint32_t)); 
 
 	nodo_t * nuevo_nodo = malloc(sizeof(nodo_t));
-	nuevo_nodo->next = NULL;gi
+	nuevo_nodo->next = NULL;
 	nuevo_nodo->longitud = longitud;
 	nuevo_nodo->arreglo = dir_cp_arreglo;
 	if(lista->head == NULL){
@@ -67,13 +67,29 @@ void imprimir_lista(lista_t* lista) {
 
 // Función auxiliar para lista_contiene_elemento
 int array_contiene_elemento(uint32_t* array, uint64_t size_of_array, uint32_t elemento_a_buscar) {
-	return 0;
+	int res = 0;
+	uint32_t * it = array;
+	for(uint32_t i = 0; i < size_of_array && !res; i++){
+		if(*it == elemento_a_buscar){
+			res = 1;
+		}
+		it++;
+	}
+	return res;
 }
 
-int lista_contiene_elemento(lista_t* lista, uint32_t elemento_a_buscar) {
-	return 0;
+int lista_contiene_elemento(lista_t *lista, uint32_t elemento_a_buscar)
+{
+	nodo_t *ptr = lista->head;
+	int res = 0;
+	while (ptr != NULL && !res){
+		if (array_contiene_elemento(ptr->arreglo, ptr->longitud, elemento_a_buscar) == 1){
+			res = 1;
+		}
+		ptr = ptr->next;
+	}
+	return res;
 }
-
 
 // Devuelve la memoria otorgada para construir la lista indicada por el primer argumento.
 // Tener en cuenta que ademas, se debe liberar la memoria correspondiente a cada array de cada elemento de la lista.

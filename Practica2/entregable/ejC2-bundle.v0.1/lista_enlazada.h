@@ -47,7 +47,8 @@ void agregar_al_final(lista_t *lista, uint32_t *arreglo, uint64_t longitud);
 // Retorna la cantidad total de elementos de todos los arreglos contenidos en la lista.
 uint64_t cantidad_total_de_elementos(lista_t *lista);
 
-// Retorna 1 si algún array de todos los nodos de la lista contiene al entero pasado por parámetro, 0 en caso contrario.
+// Retorna 1 si algún array de todos los nodos de
+// la lista contiene al entero pasado por parámetro, 0 en caso contrario.
 int lista_contiene_elemento(lista_t *lista, uint32_t elemento_a_buscar);
 
 // Libera la memoria asignada a la lista.

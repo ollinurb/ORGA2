@@ -5,7 +5,7 @@ _start:
     mov ecx, msg
     mov ebx, 1
     mov eax, 4
-    int 0x80
+    int 0x80; siempre lee eax,
     mov eax, 1
     int 0x80
 

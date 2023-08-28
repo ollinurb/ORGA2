@@ -1,4 +1,4 @@
-#Organización del Computador 2 - 2do Cuat 2023
+# Organización del Computador 2 - 2do Cuat 2023
 
 ## Instrucciones para ensamblar, linkear y ejecutar
 .

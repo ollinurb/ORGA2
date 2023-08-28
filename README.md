@@ -5,9 +5,9 @@
 - Taller 1 (Clase introductoria de Assembler)
 	- [Ejercicio 1](1_Intro_Y_Assembler/Ej1/holamundo.asm)
 	- [Ejercicio 2](1_Intro_Y_Assembler/Ej2/sumador.asm)
-- [Taller 2](2_POO_Memoria_Din\303\241mica/)
-	- [Lista enlazada](2_POO_Memoria_Din\303\241mica/lista_enlazada.c)
-	- [Vector](2_POO_Memoria_Din\303\241mica/vector.c)
+- [Taller 2](2_POO_Memoria_Dinámica/)
+	- [Lista enlazada](2_POO_Memoria_Dinámica/lista_enlazada.c)
+	- [Vector](2_POO_Memoria_Dinámica/vector.c)
 
 ## Entorno de desarrollo
 

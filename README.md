@@ -8,4 +8,6 @@
 
 - Taller 1(Clase introductoria de Assembler)
 	- [Ejercicio 1](Práctica_Assembler_1)
-- [Taller 2](/Practica2/entregable/ejC2-bundle.v0.1)
+- [Taller 2](/Practica_2/)
+	- [Lista enlazada](Practica_2/lista_enlazada.c)
+	- [Vector](Practica_2/vector.c)

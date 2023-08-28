@@ -94,4 +94,13 @@ int lista_contiene_elemento(lista_t *lista, uint32_t elemento_a_buscar)
 // Devuelve la memoria otorgada para construir la lista indicada por el primer argumento.
 // Tener en cuenta que ademas, se debe liberar la memoria correspondiente a cada array de cada elemento de la lista.
 void destruir_lista(lista_t* lista) {
+	nodo_t * ptr = lista->head;
+	while(ptr != NULL){
+		free(ptr->arreglo);
+		//deberia iterar por el arreglo y borrar cada dirección?
+		nodo_t * sig = ptr->next;
+		free(ptr);
+		ptr = sig;
+	}
+	free(lista);
 }

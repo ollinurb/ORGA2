@@ -19,7 +19,8 @@ uint64_t get_size(vector_t* vector) {
 
 void push_back(vector_t* vector, uint32_t elemento) {
     if(vector->size == vector->capacity){
-        reallocarray(vector->array, vector->capacity, 2);
+        vector->capacity *= 2;
+        vector-> array = reallocarray(vector->array, vector->capacity, sizeof(uint32_t));
     }
     uint32_t * ptr_array = vector->array;
     uint64_t i = 0;
@@ -28,6 +29,7 @@ void push_back(vector_t* vector, uint32_t elemento) {
         i++;
     }
     *ptr_array = elemento;
+    vector->size = vector->size + 1;
 }
 
 int son_iguales(vector_t* v1, vector_t* v2) {
@@ -36,18 +38,20 @@ int son_iguales(vector_t* v1, vector_t* v2) {
     }
     uint32_t * ptr1 = v1->array;
     uint32_t * ptr2 = v2->array;
-    while(ptr1 != NULL && ptr2 != NULL){
-        if(&ptr1 != &ptr2){
+    uint32_t i = 0;
+    while(i < v1->size){
+        if(*ptr1 != *ptr2){
             return 0;
         }
         ptr1++;
         ptr2++;
+        i++;
     }
     return 1;
 }
 
-uint32_t iesimo(vector_t* vector, size_t index) {
-    if(vector->size < index){
+uint32_t iesimo(vector_t* vector, size_t index) { //que es size_t?
+    if(vector->size - 1 < index){
         return 0;
     }
     uint32_t * ptr = vector->array;
@@ -72,15 +76,16 @@ void copiar_iesimo(vector_t* vector, size_t index, uint32_t* out){
 
 // Dado un array de vectores, devuelve un puntero a aquel con mayor longitud.
 vector_t* vector_mas_grande(vector_t** array_de_vectores, size_t longitud_del_array) {
-    vector_t * res = *array_de_vectores;
+    vector_t ** ptr = array_de_vectores;
+    vector_t * max = *array_de_vectores;
     size_t i = 0;
-    vector_t* it = *array_de_vectores;
     while(i < longitud_del_array){
-        if(it->size > res->size){
-            res = it;
+        vector_t * act = *ptr;
+        if(act->size > max->size){
+            max = act;
         }
         i++;
-        it++;
+        ptr++;
     }
-    return res;
+    return max;
 }

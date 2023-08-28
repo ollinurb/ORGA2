@@ -97,7 +97,6 @@ void destruir_lista(lista_t* lista) {
 	nodo_t * ptr = lista->head;
 	while(ptr != NULL){
 		free(ptr->arreglo);
-		//deberia iterar por el arreglo y borrar cada dirección?
 		nodo_t * sig = ptr->next;
 		free(ptr);
 		ptr = sig;

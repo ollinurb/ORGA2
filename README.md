@@ -8,6 +8,7 @@
 - [Taller 2](2_POO_Memoria_Dinámica/)
 	- [Lista enlazada](2_POO_Memoria_Dinámica/lista_enlazada.c)
 	- [Vector](2_POO_Memoria_Dinámica/vector.c)
+	- [Classify Chars](2_POO_Memoria_Dinámica/classify_chars.c)
 
 ## Entorno de desarrollo
 

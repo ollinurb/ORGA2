@@ -17,15 +17,11 @@ void classify_chars_in_string(char* string, char** vowels_and_cons) {
            *ptr == 'A' || *ptr == 'E' || *ptr == 'I' || *ptr == 'O' || *ptr == 'U'){
             ptr_vowel[it_vowel] = *ptr;
             it_vowel++;
-            // memset(ptr_vowel, *ptr, sizeof(char)); 
-            // ptr_vowel++;
            }
            else{
             ptr_consonant[it_consonant] = *ptr;
             it_consonant++;
-            // memset(ptr_consonant, *ptr, sizeof(char));
-            // ptr_consonant++;
-           }
+            }
         ptr++;
     }
 }
@@ -36,7 +32,7 @@ void classify_chars(classifier_t* array, uint64_t size_of_array) {
     while(i < size_of_array){
         ptr->vowels_and_consonants = calloc(2, sizeof(char*));
         ptr->vowels_and_consonants[0] = calloc(64, sizeof(char)); // arr[i] == *(arr+i)
-        ptr->vowels_and_consonants[1] = calloc(64, sizeof(char)); //problema aca.
+        ptr->vowels_and_consonants[1] = calloc(64, sizeof(char)); 
         //reservar el espacio de memoria para vowels_and_consonants
         classify_chars_in_string(ptr->string,ptr->vowels_and_consonants);
         ptr++;

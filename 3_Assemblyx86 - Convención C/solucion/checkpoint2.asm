@@ -42,10 +42,14 @@ alternate_sum_4_using_c:
 	mov rbp,rsp
 
 
-	call sumar_c
-	mov rsi, rax
 	call restar_c
-	mov 
+	mov rdi, rax
+	mov rsi, rdx
+	call sumar_c
+	mov rdi, rax
+	mov rsi, rcx
+	call restar_c
+
 	;epilogo
 	pop rbp
 	ret
@@ -55,19 +59,33 @@ alternate_sum_4_using_c:
 ; uint32_t alternate_sum_4_simplified(uint32_t x1, uint32_t x2, uint32_t x3, uint32_t x4);
 ; registros: x1[?], x2[?], x3[?], x4[?]
 alternate_sum_4_simplified:
+
+	mov rax, rdi
+	sub rax, rsi
+	add rax, rdx
+	sub rax, rcx
+
 	ret
 
 
 ; uint32_t alternate_sum_8(uint32_t x1, uint32_t x2, uint32_t x3, uint32_t x4, uint32_t x5, uint32_t x6, uint32_t x7, uint32_t x8);
-; registros y pila: x1[?], x2[?], x3[?], x4[?], x5[?], x6[?], x7[?], x8[?]
+; registros y pila: x1[rdi], x2[rsi], x3[rdx], x4[rcx], x5[r8], x6[r9], x7[rbp+0x10], x8[rbp+0x18]
 alternate_sum_8:
 	;prologo
+	push rbp
+	mov rbp, rsp
 
-	; COMPLETAR
+	sub rdi, rsi
+	add rax, rdx
+	sub rax, rcx
+	add rax, r8
+	sub rax, r9
+	add rax, [rbp + 0x10]
+	sub rax, [rbp + 0x18]
 
 	;epilogo
+	pop rbp
 	ret
-
 
 ; SUGERENCIA: investigar uso de instrucciones para convertir enteros a floats y viceversa
 ;void product_2_f(uint32_t * destination, uint32_t x1, float f1);

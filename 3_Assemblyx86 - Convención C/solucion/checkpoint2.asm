@@ -89,8 +89,17 @@ alternate_sum_8:
 
 ; SUGERENCIA: investigar uso de instrucciones para convertir enteros a floats y viceversa
 ;void product_2_f(uint32_t * destination, uint32_t x1, float f1);
-;registros: destination[?], x1[?], f1[?]
+;registros: destination[?], x1[rdi], f1[xmm0]
 product_2_f:
+	push rbp;
+	mov rbp, rsp
+
+	;xor xmm1, xmm1
+	cvtsi2sd xmm1, rdi 	;convertimos x1 a float
+	mulsd xmm1, xmm0 ;multiplicamos los dos float
+
+	CVTTSD2SI rdx, xmm1
+	pop rbp
 	ret
 
 

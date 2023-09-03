@@ -13,6 +13,7 @@ global alternate_sum_4_simplified
 global alternate_sum_8
 global product_2_f
 global alternate_sum_4_using_c
+global product_9_f
 
 ;########### DEFINICION DE FUNCIONES
 ; uint32_t alternate_sum_4(uint32_t x1, uint32_t x2, uint32_t x3, uint32_t x4);
@@ -75,7 +76,9 @@ alternate_sum_8:
 	push rbp
 	mov rbp, rsp
 
-	sub rdi, rsi
+	;sub rdi, rsi
+	mov rax, rdi
+	sub rax, rsi
 	add rax, rdx
 	sub rax, rcx
 	add rax, r8
@@ -89,18 +92,22 @@ alternate_sum_8:
 
 ; SUGERENCIA: investigar uso de instrucciones para convertir enteros a floats y viceversa
 ;void product_2_f(uint32_t * destination, uint32_t x1, float f1);
-;registros: destination[?], x1[rdi], f1[xmm0]
+;registros: destination[rdi], x1[rsi], f1[xmm0]
 product_2_f:
-	push rbp;
-	mov rbp, rsp
+	PUSH rbp
+	MOV rbp, rsp
 
-	cvtsi2sd xmm1, rdi 	;convertimos x1 a float
+	XORPD xmm1, xmm1
+	CVTSI2SS xmm1, rsi 	;convertimos x1(double word integer) a float
 
-	mulsd xmm1, xmm0 ;multiplicamos los dos float
+	MULSS xmm1, xmm0 ;multiplicamos los dos float
 
-	CVTTSD2SI rdx, xmm1
-	pop rbp
-	ret
+	CVTTSS2SI rdx, xmm1
+
+	MOV [rdi], rdx
+
+	POP rbp
+	RET
 
 
 ;extern void product_9_f(uint32_t * destination
@@ -139,7 +146,6 @@ product_9_f:
 	MULSD xmm0, xmm7
 
 	; convertimos los enteros en doubles y los multiplicamos por xmm0.
-	; COMPLETAR
 	cvtsi2sd xmm1, rdi
 	mulsd xmm0, xmm1
 	cvtsi2sd xmm1, rsi

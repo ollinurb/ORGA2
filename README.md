@@ -10,7 +10,7 @@
 	- [Vector](2_POO_Memoria_Dinámica/vector.c)
 	- [Classify Chars](2_POO_Memoria_Dinámica/classify_chars.c)
 - Taller 3
-	- [Checkpoint 2](3_Assemblyx86 - Convención C/entregable/ejC3-bundle.v0.2/solucion/checkpoint2.asm)
+	- [Checkpoint 2](3_Assemblyx86 - Convención C/solucion/checkpoint2.asm)
 
 ## Entorno de desarrollo
 

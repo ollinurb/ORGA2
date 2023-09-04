@@ -11,6 +11,7 @@
 	- [Classify Chars](2_POO_Memoria_Dinámica/classify_chars.c)
 - Taller 3
 	- [Checkpoint 2](3_Assemblyx86 - Convención C/solucion/checkpoint2.asm)
+	- [Checkpoint 3](3_Assemblyx86 - Convención C/solucion/checkpoint3.asm)
 
 ## Entorno de desarrollo
 

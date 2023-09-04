@@ -94,29 +94,35 @@ alternate_sum_8:
 ;void product_2_f(uint32_t * destination, uint32_t x1, float f1);
 ;registros: destination[rdi], x1[rsi], f1[xmm0]
 product_2_f:
-	PUSH rbp
-	MOV rbp, rsp
+	push rbp
+	mov rbp, rsp
 
-	XORPD xmm1, xmm1
-	CVTSI2SS xmm1, rsi 	;convertimos x1(double word integer) a float
+	; xorpd xmm1, xmm1
+	; cvtsi2sd xmm1, rsi 	;convertimos x1(double word integer) a float
+	; cvtss2sd xmm0, xmm0
+	; mulsd xmm1, xmm0 ;multiplicamos los dos float
+	; cvttsd2si rdx, xmm1
+	; mov [rdi], edx
 
-	MULSS xmm1, xmm0 ;multiplicamos los dos float
 
-	CVTTSS2SI rdx, xmm1
+	pxor xmm1, xmm1
+	cvtsi2sd xmm1, rsi
+	cvtss2sd xmm0, xmm0
+	mulsd xmm1, xmm0
+	cvttsd2si rsi, xmm1
+	mov [rdi], esi
 
-	MOV [rdi], rdx
-
-	POP rbp
-	RET
+	pop rbp
+	ret
 
 
 ;extern void product_9_f(uint32_t * destination
 ;, uint32_t x1, float f1, uint32_t x2, float f2, uint32_t x3, float f3, uint32_t x4, float f4
 ;, uint32_t x5, float f5, uint32_t x6, float f6, uint32_t x7, float f7, uint32_t x8, float f8
 ;, uint32_t x9, float f9);
-;registros y pila: destination[rdi], x1[rdi], f1[xmm0], x2[rsi], f2[xmm1], x3[rdx], f3[xmm2], x4[rcx], f4[xmm3]
-;	, x5[r8], f5[xmm4], x6[r9], f6[xmm5], x7[rbp + 0x10], f7[xmm6], x8[rbp + 0x18], f8[xmm7],
-;	, x9[rbp + 0x20], f9[rbp + 0x28]
+;registros y pila: destination[rdi], x1[rsi], f1[xmm0], x2[rdx], f2[xmm1], x3[rcx], f3[xmm2], x4[r8], f4[xmm3]
+;	, x5[r9], f5[xmm4], x6[rbp + 0x10], f6[xmm5], x7[rbp + 0x18], f7[xmm6], x8[rbp + 0x20], f8[xmm7],
+;	, x9[rbp + 0x28], f9[rbp + 0x30]
 product_9_f:
 	;prologo
 	push rbp
@@ -145,29 +151,38 @@ product_9_f:
 	MULSD xmm0, xmm6
 	MULSD xmm0, xmm7
 
-	; convertimos los enteros en doubles y los multiplicamos por xmm0.
-	cvtsi2sd xmm1, rdi
-	mulsd xmm0, xmm1
-	cvtsi2sd xmm1, rsi
-	mulsd xmm0, xmm1
-	cvtsi2sd xmm1, rdx
-	mulsd xmm0, xmm1
-	cvtsi2sd xmm1, rcx
-	mulsd xmm0, xmm1
-	cvtsi2sd xmm1, r8
-	mulsd xmm0, xmm1
-	cvtsi2sd xmm1, r9
-	mulsd xmm0, xmm1
-	cvtsi2sd xmm1, [rbp + 0x10]
-	mulsd xmm0, xmm1
-	cvtsi2sd xmm1, [rbp + 0x18]
-	mulsd xmm0, xmm1
-	cvtsi2sd xmm1, [rbp + 0x20]
+
+	; Traigo f9 que está en la pila a xmm1, lo convierto en double y lo multiplico
+	cvtss2sd xmm1, [rbp+0x30]
 	mulsd xmm0, xmm1
 
-	CVTSS2SD xmm1, [rbp + 0x28]
+
+	; convertimos los enteros en doubles y los multiplicamos por xmm0.
+
+	cvtsi2sd xmm1, rsi
+	cvtsi2sd xmm2, rdx
+	cvtsi2sd xmm3, rcx
+	cvtsi2sd xmm4, r8
+	cvtsi2sd xmm5, r9
+
 	mulsd xmm0, xmm1
+	mulsd xmm0, xmm2
+	mulsd xmm0, xmm3
+	mulsd xmm0, xmm4
+	mulsd xmm0, xmm5
+
+	cvtsi2sd xmm1, [rbp + 0x10]
+	cvtsi2sd xmm2, [rbp + 0x18]
+	cvtsi2sd xmm3, [rbp + 0x20]
+	cvtsi2sd xmm4, [rbp + 0x28]
+
+	mulsd xmm0, xmm1
+	mulsd xmm0, xmm2
+	mulsd xmm0, xmm3
+	mulsd xmm0, xmm4
 	
+	movsd [rdi], xmm0
+
 	; epilogo
 	pop rbp
 	ret

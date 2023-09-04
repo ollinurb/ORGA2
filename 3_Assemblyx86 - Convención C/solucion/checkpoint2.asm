@@ -97,14 +97,6 @@ product_2_f:
 	push rbp
 	mov rbp, rsp
 
-	; xorpd xmm1, xmm1
-	; cvtsi2sd xmm1, rsi 	;convertimos x1(double word integer) a float
-	; cvtss2sd xmm0, xmm0
-	; mulsd xmm1, xmm0 ;multiplicamos los dos float
-	; cvttsd2si rdx, xmm1
-	; mov [rdi], edx
-
-
 	pxor xmm1, xmm1
 	cvtsi2sd xmm1, rsi
 	cvtss2sd xmm0, xmm0
@@ -114,7 +106,6 @@ product_2_f:
 
 	pop rbp
 	ret
-
 
 ;extern void product_9_f(uint32_t * destination
 ;, uint32_t x1, float f1, uint32_t x2, float f2, uint32_t x3, float f3, uint32_t x4, float f4

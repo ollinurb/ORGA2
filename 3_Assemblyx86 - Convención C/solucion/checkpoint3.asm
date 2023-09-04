@@ -24,27 +24,16 @@ cantidad_total_de_elementos:
 	push rbp
 	mov rbp, rsp
 
-	xor rcx, rcx
 	mov rcx, [rdi]
-
 	xor eax, eax
 	xor ebx, ebx
 	loop:
 	add ebx,  [rcx + LONGITUD_OFFSET]
 	mov rcx, [rcx]
-	cmp rcx, 0
+	cmp rcx, 0 ;puntero NULL == 0x0
 	jnz loop
-	
 	add eax, ebx
 	
-	; ;habria que quedarse con la parte alta, los 32 bits que son el len. (o es la parte baja?)
-	; mov rdi, [rdi]
-	; cmp rdi, 0
-	; jnz loop
-
-	;0x7ffff7ffecc0
-	;0x7ffff7ffecf0
-
 	pop rbp
 	ret
 

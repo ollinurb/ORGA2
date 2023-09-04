@@ -4,8 +4,8 @@
 NODO_LENGTH	EQU	0x0030
 LONGITUD_OFFSET	EQU	0x0018
 
-PACKED_NODO_LENGTH	EQU	0x0001
-PACKED_LONGITUD_OFFSET	EQU	0x0001
+PACKED_NODO_LENGTH	EQU	0x0015
+PACKED_LONGITUD_OFFSET	EQU	0x0011
 
 ;########### SECCION DE DATOS
 section .data
@@ -27,6 +27,7 @@ cantidad_total_de_elementos:
 	mov rcx, [rdi]
 	xor eax, eax
 	xor ebx, ebx
+
 	loop:
 	add ebx,  [rcx + LONGITUD_OFFSET]
 	mov rcx, [rcx]
@@ -38,7 +39,20 @@ cantidad_total_de_elementos:
 	ret
 
 ;extern uint32_t cantidad_total_de_elementos_packed(packed_lista_t* lista);
-;registros: lista[?]
+;registros: lista[rdi]
 cantidad_total_de_elementos_packed:
-	ret
+	push rbp
+	mov rbp, rsp
 
+	mov rbx, [rdi]
+	xor eax, eax
+	;xor rbx, rbx
+
+	bucle:
+	add eax, [rbx + PACKED_LONGITUD_OFFSET]
+	mov rbx, [rbx]
+	cmp rbx, 0
+	jnz bucle
+
+	pop rbp
+	ret

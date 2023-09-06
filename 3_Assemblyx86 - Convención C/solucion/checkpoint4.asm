@@ -117,6 +117,8 @@ strDelete:
 	push rbp
 	mov rbp, rsp
 
+	call free
+
 	pop rbp
 	ret
 

@@ -17,7 +17,44 @@ global strLen
 ; int32_t strCmp(char* a, char* b)
 ; a[rdi] b[rsi]
 strCmp:
+	push rbp
+	mov rbp, rsp
+	;puedo usar rdx y rcx sin pushearlos porque son volatiles. voy a usar la parte baja de 8bits de cada uno para ir guardando los bits.
+	xor rcx, rcx
+	xor rdx, rdx
+	
+	.comparador:
+	xor r8, r8
+	mov BYTE cl, [rdi]
+	mov BYTE dl, [rsi]
+	cmp cl, dl
+	je .sonIguales
+	jl .aEsMenor
+	
+	;aca cae si a es mayor
+	xor rax, rax
+	mov eax, -1
+	jmp .epilogoCmp
 
+	.aEsMenor:
+	xor rax, rax
+	mov eax, 1
+	jmp .epilogoCmp
+
+	.sonIguales:
+	;chequeamos si ambos son 0. en ese caso fin. sino avanzamos ambos
+	cmp cl, 0 
+	jz .finIguales
+	inc rdi
+	inc rsi
+	jmp .comparador
+
+	.finIguales:
+	xor rax, rax
+	mov eax, 0 
+
+	.epilogoCmp:
+	pop rbp
 	ret
 
 ; char* strClone(char* a)
@@ -29,18 +66,21 @@ strCmp:
 strClone:
 	push rbp
 	mov rbp, rsp
+	
 	push rbx
 	push r14
+	
+	;limpio los registros que voy a usar
 	xor rbx, rbx
 	xor rax, rax
 	xor r14, r14
 
 	mov r14, rdi ;en r14 tengo el puntero al char original
 	call strLen
+	cmp rax, 0
+	jz esVacio
 	mov ebx, eax
-	inc ebx ;ebx lo voy a usar como iterador, quiero que itere una vez mas para copiar el escape character
-	cmp eax, 0
-	jz end
+
 	; ahora tendriamos la cantidad que queremos pedir de malloc. ¿nos falta un espacio mas para el escape character.
 	; el unico parametro que recibe malloc es el size y devuelve el puntero. osea nos da la direccion donde vamos a escribir.
 	; como son bytes el size es strLen.
@@ -51,16 +91,20 @@ strClone:
 	call malloc ;ahora en rax tendriamos el puntero donde vamos a ir copiando los datos de rsi.
 	mov rdx, rax ; la dir de memoria del puntero a copiar
 
-	xor rcx, rcx
-
 	routine:
-	mov BYTE cl, [r14]
-	mov [rdx], cl
+	mov cl, BYTE [r14]
+	mov BYTE [rdx], cl
 	inc r14
 	inc rdx
 	dec ebx
 	cmp ebx, 0
 	jnz routine
+	jz end
+
+	esVacio:
+	xor rdi, rdi
+	inc rdi
+	call malloc
 
 	end:
 	pop r14
@@ -70,6 +114,10 @@ strClone:
 
 ; void strDelete(char* a)
 strDelete:
+	push rbp
+	mov rbp, rsp
+
+	pop rbp
 	ret
 
 ;// Escribe el string en el stream indicado a través de pFile. Si el string es vacío debe escribir "NULL"

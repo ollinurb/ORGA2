@@ -4,7 +4,7 @@ Anotaciones y respuestas a preguntas de distintos items del taller.
 
 ## Lista Enlazada ##
 
-![linkedlist](/linked-list-diagram.png)
+![linkedlist](linked-list-diagram.png)
 
 Si dentro de una funcion cualquiera, creamos una lista haciendo `lista_t* mi_lista = nueva_lista();` y luego
 otra haciendo `lista_t mi_otra_lista;` ¿en que segmentos de memoria se alojan las siguientes variables?: 

@@ -10,8 +10,9 @@
 	- [Vector](2_POO_Memoria_Dinámica/vector.c)
 	- [Classify Chars](2_POO_Memoria_Dinámica/classify_chars.c)
 - Taller 3
-	- [Checkpoint 2](3_Assemblyx86 - Convención C/solucion/checkpoint2.asm)
-	- [Checkpoint 3](3_Assemblyx86 - Convención C/solucion/checkpoint3.asm)
+	- [Checkpoint 2](3_Assemblyx86_Convención_C/solucion/checkpoint2.asm)
+	- [Checkpoint 3](3_Assemblyx86_Convención_C/solucion/checkpoint3.asm)
+	- [Checkpoint 4](3_Assemblyx86_Convención_C/solucion/checkpoint4.asm)
 
 ## Entorno de desarrollo
 

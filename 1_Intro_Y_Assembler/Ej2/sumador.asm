@@ -13,4 +13,3 @@ _start:
 
 _data:
 	num1 db 0xFF
-	

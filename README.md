@@ -13,6 +13,8 @@
 	- [Checkpoint 2](3_Assemblyx86_Convención_C/solucion/checkpoint2.asm)
 	- [Checkpoint 3](3_Assemblyx86_Convención_C/solucion/checkpoint3.asm)
 	- [Checkpoint 4](3_Assemblyx86_Convención_C/solucion/checkpoint4.asm)
+- Taller 4
+	- [Checkpoint 1](4_SIMD/ej1y2/checkpoint1.asm)
 
 ## Entorno de desarrollo
 

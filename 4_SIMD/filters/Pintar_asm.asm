@@ -1,8 +1,9 @@
 %define pixel_negro 0xFF
 %define pixel_blanco 0xFFFFFFFF
 
-align 16
+
 section .data
+align 16
 all_white_pixels times 4 db 0xFF, 0xFF, 0xFF, 0xFF
 all_black_pixels times 4 db 0x00, 0x00, 0x00, 0xFF
 black_white_pixels db 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
@@ -14,15 +15,6 @@ pix dw 0xFFFF
 
 global Pintar_asm
 
-;void Pintar_asm(unsigned char *src,
-;              unsigned char *dst,
-;              int width,
-;              int height,
-;              int src_row_size,
-;              int dst_row_size);
-
-
-
 section .text
 ; unsigned char* src[rdi], unsigned char* dst[rsi], int width[rdx], int height[rcx], int src_row_size[r8], int dst_row_size[r9] 
 Pintar_asm:	
@@ -31,13 +23,10 @@ Pintar_asm:
 	mov rbp, rsp
 	;necesito un par de registros mas.
 	push rbx
-	push rbp
+	push r14
 	push r12
 	push r13
-	
 
-	xor rbx, rbx ; fila actual
-	xor rbp, rbp ; columna actual
 
 	xor r12, r12
 	mov r12, rdx
@@ -54,61 +43,65 @@ Pintar_asm:
 	movdqa xmm0, [all_white_pixels]
 	movdqa xmm1, [all_black_pixels]
 	movdqa xmm2, [black_white_pixels]
-	movdqa xmm3, [black_white_pixels]
+	movdqa xmm3, [white_black_pixels]
 
-	
-	; casos en los que pinto 4 negros. si el fila actual es 1, 2 , height original, o height original - 1.
+	;ahora que tengo todos los bloques, deberia hacer un loop tradicional.
+	xor rbx, rbx ; fila actual
+	.filas: ;cada vez que termino una fila, vuelvo acá. deberiamos ir de la fila 0, hasta la fila height[rcx]
+	;osea si fila actual es igual a height, terminé, me voy.
+	cmp rbx, rcx
+	jz .fin
+	;ahora que estamos adentro del loop grande, tenemos que loopear columnas.
+	;necesitamos un nuevo registro que para cada fila, arranque en 0 y empiece a contar.
 
-	.kind_of_block:
+	xor r14, r14 ;columna actual
+	.columna:
+	;habria que chequear que no nos salimos de la columna.
+	cmp r14, rdx
+	jz .finFila
 
-	cmp rbx, 1
-	jle .4_black
-	cmp rbx, r13 ; r13 es rcx - 2 (height - 2)
+	cmp rbx, 1 
+	jle .4_black ;estamos en las dos primeras filas (todo negro)
+	cmp rbx, r13 ; r13 es height - 2 // estamos en las dos ultimas filas (todo negro.)
 	jge .4_black
 
-	cmp rbp, 0
+	cmp r14, 0 ;r14 es columna actual
 	jz .bbww
 
-	cmp rbp, r12 ; r12 es rdx - 2
+	cmp r14, r12 ; r12 es width - 4
 	jz .wwbb
 
 	;si no entra en ninguno de estos es todo blanco.
 	.4_white:
-	movdqa [rsi], xmm0
-	jmp .incrementador
-
-	.incrementador: ;se fija si avanza el contador de filas, el contador de columnas, o si llegamos al final. 
-	add rsi, 2
-	cmp rbp, rdx
-	jz .ultimaColumna 
-	add rbp, 4 ;solo incremento el contador de columna actual, me mantengo en la misma fila.
-	jmp .kind_of_block
-
-	.ultimaColumna:
-	cmp rbx, rcx
-	jz .fin ;estoy en la ultima celda, listo
-	;sino no, y tengo que resetear el contador de columnas, e incrementar en 1 el contador de filas.
-	add rbx, 4
-	xor rbp, rbp
-	jmp .kind_of_block ;vuelve a la rutina.
+	movdqu [rsi], xmm0
+	jmp .siguienteBloque
 
 	.4_black:
-	movdqa [rsi], xmm1
-	jmp .incrementador
+	movdqu [rsi], xmm1
+	jmp .siguienteBloque
 
 	.bbww:
-	movdqa [rsi], xmm2
-	jmp .incrementador
+	movdqu [rsi], xmm2
+	jmp .siguienteBloque
 
 	.wwbb:
-	movdqa [rsi], xmm3
-	jmp .incrementador
+	movdqu [rsi], xmm3
+	jmp .siguienteBloque
+
+	.siguienteBloque:
+	add r14, 4
+	add rsi, 16
+	jmp .columna
+
+	.finFila:
+	add rbx, 1
+	jmp .filas
 
 	.fin:
 	;epilogo
 	pop r13
 	pop r12
-	pop rbp
+	pop r14
 	pop rbx
 	pop rbp
 	ret

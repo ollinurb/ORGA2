@@ -1,7 +1,8 @@
 global temperature_asm
 
 section .data
-mask_alphas times 2 dq 0x000000000000FFFF
+align 16
+mask_alphas times 2 dq 0x0000FFFFFFFFFFFF
 packed_3_div times 4 dd 0x00000003
 pix1_template dd 0x000000FF
 pix2_template dd 0x0000FFFF
@@ -47,17 +48,19 @@ temperature_asm:
     paddsw xmm0, xmm0 ;sumo horizontal 2 veces para hacer R+G+B
     paddsw xmm0, xmm0
     pmovzxwd xmm0, xmm0 ;expando para convertir a Single Precision FP Value (32 bits)
-    pmovdqu xmm1, [packed_3_div]
-    cvtpi2ss xmm1, xmm1 ;quiero convertir los 3 empaquetados a Single FP.
+    cvtpi2ps xmm1, [packed_3_div] ;quiero convertir los 3 empaquetados a Single FP.
     divps xmm0, xmm1
     cvttps2dq xmm0, xmm0 ;convertimos a int truncando
     xor r12, r12 
-    movd r12d, dword xmm0 ;movemos t0
+    movd r12d, xmm0 ;movemos t0
     pslldq xmm0, 4 ;movemos 4 bytes para tener el siguiente t.
     xor r13, r13
-    movd r13d, dword xmm0
+    movd r13d, xmm0
 
-    pcmp xmm0, 
+
+    .sigFila:
+
+    ;pcmp xmm0, 
 
     .selectorT1:
     cmp r12d, 32
@@ -72,11 +75,21 @@ temperature_asm:
 
     .pix1:
     xor rax, rax
-    mul r12d, 4
+    mov rax, 4
+    mul r12
     add al, 128
-    xor xmm2, xmm2
-    mov xmm2, rax
-    pshlldq xmm2, 8
+    pxor xmm2, xmm2
+    ;mov byte xmm2, rax
+    pslldq xmm2, 8
+
+    .pix2:
+
+    .pix3:
+
+    .pix4:
+
+    .pix5:
+
     pand xmm2, [pix1_template]
 
     ;ahora ya tenemos los valores de t0 y t1. Hay que tratarlos por separado. Podemos backupear y calcular 2 mas. Ya que vamos a escribir 4 pixeles.
@@ -85,7 +98,7 @@ temperature_asm:
     
 
 
-
+    .fin:
     ;epilogo
     pop r14
     pop r13

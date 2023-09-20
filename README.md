@@ -16,6 +16,13 @@
 - Taller 4
 	- [Checkpoint 1](4_SIMD/ej1y2/checkpoint1.asm)
 	- [Checkpoint 2](4_SIMD/ej1y2/checkpoint2.asm)
+	- [Filtro Pintar](4_SIMD/filters/Pintar_asm.asm)
+	- [Filtro Temperatura](4_SIMD/filters/temperature_asm.asm)
+
+
+## Como debuggear los filtros del taller 4
+
+`gdb --args ./build/simd Pintar -i asm img/paisaje.bmp -o imagenes_salida/`
 
 ## Entorno de desarrollo
 

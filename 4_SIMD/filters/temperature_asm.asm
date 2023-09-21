@@ -42,21 +42,30 @@ temperature_asm:
     .columna:
     cmp r8, rcx
     jz .fin 
+    movdqu xmm3, [rdi] ;traigo 4 pixeles.
+
+    ;podemos procesar de 2 en 2 y despues juntar los 4 t.
+    movq xmm4, xmm3 ;2 primeros pixeles en xmm4
+    psrldq xmm3, 8 ;2 segundos pixeles en xmm3
+
     pmovzxbw xmm0, [rdi] ;tenemos 2 pixeles con 8 componentes extendidos a word. 
     ;habria que usar la mascara para limpiar el alpha. ¿como es la forma de la mascara?
     pand xmm0, [mask_alphas]
-    paddsw xmm0, xmm0 ;sumo horizontal 2 veces para hacer R+G+B
-    paddsw xmm0, xmm0
+    phaddsw xmm0, xmm0 ;sumo horizontal 2 veces para hacer R+G+B
+    phaddsw xmm0, xmm0
     pmovzxwd xmm0, xmm0 ;expando para convertir a Single Precision FP Value (32 bits)
+    cvtdq2ps xmm0, xmm0
     cvtpi2ps xmm1, [packed_3_div] ;quiero convertir los 3 empaquetados a Single FP.
     divps xmm0, xmm1
     cvttps2dq xmm0, xmm0 ;convertimos a int truncando
+
+    ;hasta aca esta haciendo las cosas bien. habria que pedirle que lo haga por 2.
+
     xor r12, r12 
     movd r12d, xmm0 ;movemos t0
     pslldq xmm0, 4 ;movemos 4 bytes para tener el siguiente t.
     xor r13, r13
     movd r13d, xmm0
-
 
     .sigFila:
 

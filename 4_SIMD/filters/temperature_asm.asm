@@ -9,6 +9,10 @@ pix2_template dd 0x0000FFFF
 pix3_template dd 0x00FF00FF
 pix4_template dd 0xFF0000FF
 pix5_template dd 0x000000FF
+align 16
+mask_bottom_xmm dq 0x0000000000000000, 0xFFFFFFFF00000000
+align 16
+mask_top_xmm dq 0x0000000000000000, 0x00000000FFFFFFFF
 
 section .text
 ;void temperature_asm(u80nsigned char *src,
@@ -50,15 +54,36 @@ temperature_asm:
 
     pmovzxbw xmm0, [rdi] ;tenemos 2 pixeles con 8 componentes extendidos a word. 
     ;habria que usar la mascara para limpiar el alpha. ¿como es la forma de la mascara?
+    pmovzxbw xmm4, xmm4
+    pmovzxbw xmm3, xmm3
+    
     pand xmm0, [mask_alphas]
+    pand xmm3, [mask_alphas]
+    pand xmm4, [mask_alphas]
     phaddsw xmm0, xmm0 ;sumo horizontal 2 veces para hacer R+G+B
     phaddsw xmm0, xmm0
+    phaddsw xmm3, xmm3
+    phaddsw xmm3, xmm3
+    phaddsw xmm4, xmm4
+    phaddsw xmm4, xmm4
+    ;ahora podemos combinar xmm3 y xmm4. desde aca prueba
+    pand xmm3, [mask_bottom_xmm]
+    pand xmm4, [mask_top_xmm]
+    por xmm3, xmm4
+    ;ahora en xmm3 tenemos empaquedados los 4 valores.
     pmovzxwd xmm0, xmm0 ;expando para convertir a Single Precision FP Value (32 bits)
+    pmovzxwd xmm3, xmm3
+    pmovzxwd xmm4, xmm4
     cvtdq2ps xmm0, xmm0
+    cvtdq2ps xmm3, xmm3
+    cvtdq2ps xmm4, xmm4
     cvtpi2ps xmm1, [packed_3_div] ;quiero convertir los 3 empaquetados a Single FP.
     divps xmm0, xmm1
+    divps xmm3, xmm1
+    divps xmm4, xmm1
     cvttps2dq xmm0, xmm0 ;convertimos a int truncando
-
+    cvttps2dq xmm3, xmm3
+    cvttps2dq xmm4, xmm4 
     ;hasta aca esta haciendo las cosas bien. habria que pedirle que lo haga por 2.
 
     xor r12, r12 

@@ -46,51 +46,36 @@ temperature_asm:
     .columna:
     cmp r8, rcx
     jz .fin 
-    movdqu xmm3, [rdi] ;traigo 4 pixeles.
+    movdqu xmm0, [rdi] ;traigo 4 pixeles.
 
     ;podemos procesar de 2 en 2 y despues juntar los 4 t.
-    movq xmm4, xmm3 ;2 primeros pixeles en xmm4
-    psrldq xmm3, 8 ;2 segundos pixeles en xmm3
+    movq xmm2, xmm0 ;2 primeros pixeles en xmm2
+    psrldq xmm0, 8 ;2 segundos pixeles en xmm0
 
-    pmovzxbw xmm0, [rdi] ;tenemos 2 pixeles con 8 componentes extendidos a word. 
-    ;habria que usar la mascara para limpiar el alpha. ¿como es la forma de la mascara?
-    pmovzxbw xmm4, xmm4
-    pmovzxbw xmm3, xmm3
+    pmovzxbw xmm2, xmm2
+    pmovzxbw xmm0, xmm0
     
     pand xmm0, [mask_alphas]
-    pand xmm3, [mask_alphas]
-    pand xmm4, [mask_alphas]
+    pand xmm2, [mask_alphas]
     phaddsw xmm0, xmm0 ;sumo horizontal 2 veces para hacer R+G+B
     phaddsw xmm0, xmm0
-    phaddsw xmm3, xmm3
-    phaddsw xmm3, xmm3
-    phaddsw xmm4, xmm4
-    phaddsw xmm4, xmm4
-    ;ahora podemos combinar xmm3 y xmm4. desde aca prueba
-    pand xmm3, [mask_bottom_xmm]
-    pand xmm4, [mask_top_xmm]
-    por xmm3, xmm4
-    ;ahora en xmm3 tenemos empaquedados los 4 valores.
+    phaddsw xmm2, xmm2
+    phaddsw xmm2, xmm2
+    ;ahora podemos combinar xmm0 y xmm2.
+    pand xmm0, [mask_bottom_xmm]
+    pand xmm2, [mask_top_xmm]
+    por xmm0, xmm2
+    psrldq xmm0, 8
+    ;ahora en xmm0 tenemos empaquetados los 4 valores.
     pmovzxwd xmm0, xmm0 ;expando para convertir a Single Precision FP Value (32 bits)
-    pmovzxwd xmm3, xmm3
-    pmovzxwd xmm4, xmm4
     cvtdq2ps xmm0, xmm0
-    cvtdq2ps xmm3, xmm3
-    cvtdq2ps xmm4, xmm4
-    cvtpi2ps xmm1, [packed_3_div] ;quiero convertir los 3 empaquetados a Single FP.
+    cvtdq2ps xmm1, [packed_3_div] ;quiero convertir los 3 empaquetados a Single FP.
     divps xmm0, xmm1
-    divps xmm3, xmm1
-    divps xmm4, xmm1
     cvttps2dq xmm0, xmm0 ;convertimos a int truncando
-    cvttps2dq xmm3, xmm3
-    cvttps2dq xmm4, xmm4 
+   
+    ; =====
     ;hasta aca esta haciendo las cosas bien. habria que pedirle que lo haga por 2.
-
-    xor r12, r12 
-    movd r12d, xmm0 ;movemos t0
-    pslldq xmm0, 4 ;movemos 4 bytes para tener el siguiente t.
-    xor r13, r13
-    movd r13d, xmm0
+    ;tenemos los 4 T en xmm0, los registros xmm1 y xmm2 podemos reutilizarlos.
 
     .sigFila:
 

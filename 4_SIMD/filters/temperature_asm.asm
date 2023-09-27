@@ -13,7 +13,6 @@ pix4_template_b times 4 db 0xFF, 0x00, 0x00, 0xFF
 pix5_template_a times 4 db 0xFF, 0x00, 0x00, 0x00
 pix5_template_b times 4 db 0x00, 0x00, 0x00, 0x00
 
-
 pix5_template dd 0x000000FF
 align 16
 mask_bottom_xmm dq 0x0000000000000000, 0xFFFFFFFF00000000
@@ -25,8 +24,6 @@ packed_96_doubles times 4 dd 96
 packed_128_doubles times 4 dd 128
 packed_160_doubles times 4 dd 160
 packed_224_doubles times 4 dd 224
-
-
 
 section .text
 ;void temperature_asm(u80nsigned char *src,
@@ -127,7 +124,7 @@ temperature_asm:
     movdqu xmm4, [pix3_template_a]
     pslld xmm3, 24
     psrld xmm3, 8
-    psubd xmm4, xmm3
+    psubw xmm4, xmm3
     psrld xmm3, 16
     por xmm3, xmm4
     movdqu xmm4, [pix3_template_b]
@@ -143,7 +140,7 @@ temperature_asm:
     packuswb xmm4, xmm4
     pmovzxbd xmm4, xmm4
     movdqu xmm5, [pix4_template_a]
-    pslld xmm3, 24
+    pslld xmm4, 24
     psrld xmm4, 16
     psubd xmm5, xmm4
     movdqu xmm4, [pix4_template_b]

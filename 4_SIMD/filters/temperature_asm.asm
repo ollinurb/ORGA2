@@ -47,19 +47,18 @@ temperature_asm:
 
     ;como voy a loopear? proceso de 2 pixeles a la vez. c pixel ocupa 4 bytes. me muevo de a 8 bytes. 
 
-    xor r8, r8 ;r8 y r9 estan usados por src_row_size y dst_row_size, pero para estos ejercicios no los usamos. 
+    xor r9, r9 ;r8 y r9 estan usados por src_row_size y dst_row_size, pero para estos ejercicios no los usamos. 
     ;prefiero usar estos antes de usas los registros no volatiles. los voy a usar para contar filas y columnas.
 
-    sub rdx, 2 ;reduzco en 2 el width para poder usarlo como guarda. 
+    ;sub rdx, 2 ;reduzco en 2 el width para poder usarlo como guarda. 
 
     .fila:
-    cmp r8, rdx
-    jz .sigFila        
 
-    xor r9, r9 ;el contador de columnas que vamos escribiendo.
+    xor r8, r8 ;el contador de columnas que vamos escribiendo.    
     .columna:
-    cmp r8, rcx
-    jz .fin 
+    cmp r8, rdx
+    jz .sigFila
+
     movdqu xmm0, [rdi] ;traigo 4 pixeles.
 
     ;podemos procesar de 2 en 2 y despues juntar los 4 t.
@@ -215,45 +214,29 @@ temperature_asm:
     pcmpgtd xmm10, xmm11
     ;M5 en xmm10 X >= 224
     
-    ;ahora comparamos xmm0 con xmm6 usando ORs
+    ;ahora comparamos xmm(i) con xmm(i+5) 1 <= i <= 5
+    pand xmm1, xmm6
+    pand xmm2, xmm7
+    pand xmm3, xmm8
+    pand xmm4, xmm9
+    pand xmm5, xmm10
 
-    .selectorT1:
-    cmp r12d, 32
-    jl .pix1
-    cmp r12d, 96
-    jl .pix2
-    cmp r12d, 160
-    jl .pix3
-    cmp r12d, 224
-    jl .pix4
-    jmp .pix5
+    por xmm1, xmm2
+    por xmm1, xmm3
+    por xmm1, xmm4
+    por xmm1, xmm5
 
-    .pix1:
-    xor rax, rax
-    mov eax, 4
-    mul r12d
-    add eax, 128
-    pxor xmm2, xmm2
-    ;mov byte xmm2, rax
-    pslldq xmm2, 8
-
-    .pix2:
-
-    .pix3:
-
-    .pix4:
-
-    .pix5:
-
+    movdqu [rsi], xmm1
+    add rdi, 16
+    add rsi, 16
+    add r8, 4
+    jmp .columna
 
     .sigFila:
-
-    ;pcmp xmm0, 
-
-    
-    pand xmm2, [pix1_template]
-
-    ;ahora ya tenemos los valores de t0 y t1. Hay que tratarlos por separado. Podemos backupear y calcular 2 mas. Ya que vamos a escribir 4 pixeles.
+    add r9, 1
+    cmp r9, rcx
+    jz .fin
+    jmp .fila
 
     .fin:
     ;epilogo

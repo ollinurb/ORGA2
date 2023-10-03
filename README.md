@@ -23,6 +23,11 @@
 - Repaso Primer Parcial
 	- [Ejercicio 1 - 1er Cuatrimestre 2022](<Repaso 1er Parcial/Ejercicios Individuales para practicar pre-parcial/Parcial 1c2022/entregable/parcial-bundle.v0.1/solucion/ej1.asm>)
 
+
+## PARCIAL 1 
+
+[PARCIAL 1](<PARCIAL 1>)
+
 ## Como debuggear los filtros del taller 4
 
 `gdb --args ./build/simd Pintar -i asm img/paisaje.bmp -o imagenes_salida/`

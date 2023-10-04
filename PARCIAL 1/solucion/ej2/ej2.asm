@@ -69,9 +69,14 @@ movdqu xmm8, xmm4
 por xmm8, xmm6 ;en xmm8 tengo todos los pixeles que se les aplica F1 o F2.
 
 ;creo un registro con todos 1s
-pxor xmm9, xmm9
+pcmpeqd xmm9, xmm9 ;xmm9 tiene todos 1s
+pxor xmm8, xmm9 ;en xmm8 tengo los pixeles a los que se les aplica F2
 
+;No llegué de tiempo, habria que meter todo esto en un ciclo que loopee de a 4 columnas y de a 1 fila cada vez
+;que termina una columna. 
 
+;para reordenar los pixeles no llegué a pensar una solución, pero podria usarse un shuffle.
+;hacer las 3 opciones, y despues ir pisando con la mascara los pixeles que queremos. 
 
 pop rbp
 ret

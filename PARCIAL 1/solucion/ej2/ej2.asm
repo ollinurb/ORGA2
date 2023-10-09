@@ -1,12 +1,12 @@
 global mezclarColores
 
-section.data
+section .data
 align 16
 red_pixels times 4 db 0xFF, 0x00, 0x00, 0x00
 green_pixels times 4 db 0x00, 0xFF, 0x00, 0x00
 blue_pixels times 4 db 0x00, 0x00, 0xFF, 0x00
-
-
+shuffle_mask_1 db 2, 0, 1, 3, 6, 4, 5, 7, 10, 8, 9, 11, 14, 12, 13, 15
+shuffle_mask_2 db 1,2,0,3,5,6,4,7,9,10,8,11,13,14,12,15
 
 ;########### SECCION DE TEXTO (PROGRAMA)
 section .text
@@ -28,9 +28,9 @@ movdqa xmm1, [red_pixels]
 movdqa xmm2, [green_pixels]
 movdqa xmm3, [blue_pixels]
 
-por xmm1, xmm0
-por xmm2, xmm0
-por xmm3, xmm0
+pand xmm1, xmm0 ;corrección, había puesto OR en el parcial.
+pand xmm2, xmm0
+pand xmm3, xmm0
 
 ;habria que shiftear los registros para que c/componente quede al comienzo de la dword que ocupa cada pixel, asi al
 ;comparar tenemos todo en el mismo lugar.
@@ -53,11 +53,11 @@ pand xmm4, xmm5 ;en xmm4 ahora tengo los pixeles a los que les tengo que aplicar
 
 pxor xmm6, xmm6
 movdqu xmm6, xmm2
-pcmpgtd xmm6, xmm1 ;en xmm6 tengo los R < G
+pcmpgtd xmm6, xmm1 ;en xmm6 tengo los R < G !!Ya las tengo, puedo negar xmm4
 
 pxor xmm7, xmm7
 movdqu xmm7, xmm3
-pcmpgtd xmm7, xmm2 ;en xmm7 tengo los G < B
+pcmpgtd xmm7, xmm2 ;en xmm7 tengo los G < B !!Ya las tengo, puedo negar xmm5
 
 pand xmm6, xmm7 ;en xmm6 ahora tengo los pixeles que les tengo que aplicar la F2
 
@@ -71,6 +71,11 @@ por xmm8, xmm6 ;en xmm8 tengo todos los pixeles que se les aplica F1 o F2.
 ;creo un registro con todos 1s
 pcmpeqd xmm9, xmm9 ;xmm9 tiene todos 1s
 pxor xmm8, xmm9 ;en xmm8 tengo los pixeles a los que se les aplica F2
+
+movdqu xmm10, xmm0 ;muevo los pixeles originales a xmm10
+movdqu xmm11, xmm0
+movdqu xmm10, [shuffle_mask_1] ;en xmm10 como quedarian con la funcion 1
+pshufb xmm11, [shuffle_mask_2] ;en xmm11 como quedarian con la funcion 2
 
 ;No llegué de tiempo, habria que meter todo esto en un ciclo que loopee de a 4 columnas y de a 1 fila cada vez
 ;que termina una columna. 

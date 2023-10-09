@@ -42,6 +42,8 @@ mov rbp, rsp
 
 ;pList tiene el primer y el ultimo elemento de la lista. 
 ;Quiero iterar hasta llegar al ultimo elemento de la lista.
+
+;no me hace falta chequear que sea el ultimo, como es una lista enlazada simplemente me aseguro que no apunte a NULL.
 xor rdx, rdx
 mov rdx, [rdi + offset_last_elem] ;rdx es la guarda.
 xor rcx, rcx
@@ -147,7 +149,7 @@ push r14
 push r15 ;los voy a usar para guardar en no volatiles la cantidad de pagos Aprob/Desap
 
 push rbx
-sub rsp, 8 ;alineo la pila
+;sub rsp, 8 ;alineo la pila ;al hacer esto obteniamos segmentation fault al salir de la funcion.
 
 xor r12, r12
 mov r12, rdi ;r12 tiene la lista de pagos

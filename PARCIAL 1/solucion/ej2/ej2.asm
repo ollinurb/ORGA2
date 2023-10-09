@@ -7,6 +7,7 @@ green_pixels times 4 db 0x00, 0xFF, 0x00, 0x00
 blue_pixels times 4 db 0x00, 0x00, 0xFF, 0x00
 shuffle_mask_1 db 2, 0, 1, 3, 6, 4, 5, 7, 10, 8, 9, 11, 14, 12, 13, 15
 shuffle_mask_2 db 1,2,0,3,5,6,4,7,9,10,8,11,13,14,12,15
+alpha_cleaner times 4 db 0xFF, 0xFF, 0xFF, 0x00
 
 ;########### SECCION DE TEXTO (PROGRAMA)
 section .text
@@ -22,6 +23,15 @@ mov rbp, rsp
 ; y para solo quedarme con Bi en 3 registros distintos.
 
 ;Luego hacer todas las comparaciones y armar la mascara final.
+
+
+xor r9, r9 ;contador filas
+
+.fila:
+xor r8, r8 ;contador columnas
+.columna:
+cmp r8, rdx
+jz .sigFila
 
 movdqu xmm0, [rdi] ;traigo 4 pixeles
 movdqa xmm1, [red_pixels]
@@ -70,13 +80,37 @@ por xmm8, xmm6 ;en xmm8 tengo todos los pixeles que se les aplica F1 o F2.
 
 ;creo un registro con todos 1s
 pcmpeqd xmm9, xmm9 ;xmm9 tiene todos 1s
-pxor xmm8, xmm9 ;en xmm8 tengo los pixeles a los que se les aplica F2
+pxor xmm8, xmm9 ;en xmm8 tengo los pixeles a los que se les aplica F3
 
 movdqu xmm10, xmm0 ;muevo los pixeles originales a xmm10
 movdqu xmm11, xmm0
-movdqu xmm10, [shuffle_mask_1] ;en xmm10 como quedarian con la funcion 1
+movdqu xmm12, xmm0 ;en xmm12 como quedarian con la funcion 3
+pshufb xmm10, [shuffle_mask_1] ;en xmm10 como quedarian con la funcion 1
 pshufb xmm11, [shuffle_mask_2] ;en xmm11 como quedarian con la funcion 2
 
+pand xmm4, xmm10
+pand xmm6, xmm11
+pand xmm8, xmm12
+
+por xmm4, xmm6
+por xmm4, xmm8
+
+pand xmm4, [alpha_cleaner]
+
+movdqu [rsi], xmm4
+add rdi, 16
+add rsi, 16
+add r8, 4
+jmp .columna
+
+.sigFila:
+add r9, 1
+cmp r9, rcx
+jz .fin
+jmp .fila
+
+.fin:
+;como enmascaramos las respuestas?
 ;No llegué de tiempo, habria que meter todo esto en un ciclo que loopee de a 4 columnas y de a 1 fila cada vez
 ;que termina una columna. 
 

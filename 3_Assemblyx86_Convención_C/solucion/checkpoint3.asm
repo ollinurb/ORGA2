@@ -26,15 +26,13 @@ cantidad_total_de_elementos:
 
 	mov rcx, [rdi]
 	xor rax, rax
-	xor rbx, rbx
  
 	loop:
-	add ebx, DWORD [rcx + LONGITUD_OFFSET]
+	add eax, DWORD [rcx + LONGITUD_OFFSET]
 	mov rcx, [rcx]
 	cmp rcx, 0 ;puntero NULL == 0x0
 	jnz loop
-	add eax, ebx
-	
+
 	pop rbp
 	ret
 
@@ -44,14 +42,13 @@ cantidad_total_de_elementos_packed:
 	push rbp
 	mov rbp, rsp
 
-	mov rbx, [rdi]
-	xor eax, eax
-	;xor rbx, rbx
+	mov rdi, [rdi]
+	xor rax, rax
 
 	bucle:
-	add eax, [rbx + PACKED_LONGITUD_OFFSET]
-	mov rbx, [rbx]
-	cmp rbx, 0
+	add eax, dword [rdi + PACKED_LONGITUD_OFFSET]
+	mov rdi, [rdi]
+	cmp rdi, 0
 	jnz bucle
 
 	pop rbp

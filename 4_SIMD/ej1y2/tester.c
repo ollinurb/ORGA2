@@ -30,12 +30,12 @@ uint32_t shuffle_int(uint32_t min, uint32_t max){
  * Tests checkpoint 1
  */
 
-//void invertirQW_asm(uint8_t* p, uint8_t n, uint8_t m)
+//void invertirQW(uint64_t* p)
 
 TEST(test_invertirQW) {
 	for (int i = 0; i < 100; i++) {
-        uint64_t* test_QW_c = (uint64_t*) malloc(2);
-        uint64_t* test_QW_asm = (uint64_t*) malloc(2);
+        uint64_t* test_QW_c = (uint64_t*) malloc(2*sizeof(uint64_t));
+        uint64_t* test_QW_asm = (uint64_t*) malloc(2*sizeof(uint64_t));
         shuffle(256);
 
         for (int k = 0; k < 2; k++){

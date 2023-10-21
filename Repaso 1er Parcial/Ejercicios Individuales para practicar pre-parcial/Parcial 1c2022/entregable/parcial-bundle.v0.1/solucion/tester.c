@@ -141,5 +141,3 @@ void test_ej1(char* filename) {
     strArrayDelete(a);
     NL(filename)
 }
-
-

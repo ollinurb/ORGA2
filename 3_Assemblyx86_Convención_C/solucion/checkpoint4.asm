@@ -136,6 +136,8 @@ strPrint:
 	mov rdi, rsi
 	mov rsi, rbx
 
+	jmp fprintf
+	
 	;solo queremos imprimir los caracteres validos, necesitamos loopear.
 	cmp BYTE [rsi], 0
 	jz esNull

@@ -1,0 +1,44 @@
+/usr/src/orga2/4_SIMD/tests # python3 1_generar_imagenes.py 
+NoCountryForOldMen.bmp
+  2048x1200  1024x600  512x300  256x150  128x75  64x37  32x18  32x18
+Wargames.bmp
+  2048x1200  1024x600  512x300  256x150  128x75  64x37  32x18  32x18
+/usr/src/orga2/4_SIMD/tests # python3 2_test_diff_cat_asm.py 
+Iniciando test de diferencias C vs. la catedra...
+filtro Pintar version catedra contra tu asm
+./simdcatedra Pintar -i c -o ./data/resultados_catedra/ ./data/imagenes_a_testear/NoCountryForOldMen.128x75.bmp 
+/bin/sh: ./simdcatedra: not found
+/bin/sh: ./simdcatedra: not found
+Traceback (most recent call last):
+  File "/usr/src/orga2/4_SIMD/tests/2_test_diff_cat_asm.py", line 13, in <module>
+    ok = verificar(corrida['filtro'], corrida['params'], corrida['tolerancia'], 'asm', imagen)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/src/orga2/4_SIMD/tests/libtest.py", line 63, in verificar
+    archivo_out_cat = correr_catedra(filtro, 'c', archivo_in, extra_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/src/orga2/4_SIMD/tests/libtest.py", line 40, in correr_catedra
+    archivo_out = subprocess.check_output(comando + ' -n ' + argumentos, shell=True)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command './simdcatedra Pintar -n  -i c -o ./data/resultados_catedra/ ./data/imagenes_a_testear/NoCountryForOldMen.128x75.bmp ' returned non-zero exit status 127.
+/usr/src/orga2/4_SIMD/tests # ls
+1_generar_imagenes.py   3_correr_test_mem.sh    data                    simdcatedra
+2_test_diff_cat_asm.py  __pycache__             libtest.py              termcolor.py
+/usr/src/orga2/4_SIMD/tests # ./simdcatedra Pintar -n  -i c -o ./data/resultados_catedra/ ./data/imagenes_a_testear/NoCountryForOldMen.128x75.b
+mp
+/bin/sh: ./simdcatedra: not found
+/usr/src/orga2/4_SIMD/tests # ls
+1_generar_imagenes.py   3_correr_test_mem.sh    data                    simdcatedra
+2_test_diff_cat_asm.py  __pycache__             libtest.py              termcolor.py
+/usr/src/orga2/4_SIMD/tests # ./simdcatedra 
+/bin/sh: ./simdcatedra: not found
+/usr/src/orga2/4_SIMD/tests # which python3
+/usr/bin/python3
+/usr/src/orga2/4_SIMD/tests # python3 --version
+Python 3.11.5
+/usr/src/orga2/4_SIMD/tests # 
+

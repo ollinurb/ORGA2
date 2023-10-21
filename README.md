@@ -19,12 +19,11 @@
 	- [Filtro Pintar](4_SIMD/filters/Pintar_asm.asm)
 	- [Filtro Temperatura](4_SIMD/filters/temperature_asm.asm)
 
-
-- Repaso Primer Parcial
-	- [Ejercicio 1 - 1er Cuatrimestre 2022](<Repaso 1er Parcial/Ejercicios Individuales para practicar pre-parcial/Parcial 1c2022/entregable/parcial-bundle.v0.1/solucion/ej1.asm>)
-
+- [Taller 5](5_Pasaje_a_Modo_Protegido)
 
 ## PARCIAL 1 
+- Repaso Primer Parcial
+	- [Ejercicio 1 - 1er Cuatrimestre 2022](<Repaso 1er Parcial/Ejercicios Individuales para practicar pre-parcial/Parcial 1c2022/entregable/parcial-bundle.v0.1/solucion/ej1.asm>)
 
 [PARCIAL 1](<PARCIAL 1>)
 

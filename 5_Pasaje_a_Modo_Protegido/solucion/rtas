@@ -1,0 +1,111 @@
+Primera parte:
+
+1) 
+
+Modo Real: Es el modo de operacion inicial del procesador. Viene del 8086 y se maneja con tamaños de palabra de 16bits, direcc a 1Mb, entre otras limitaciones. No tiene un sistema de privilegios, no permite paginar. Esta presente en la arquitectura por un tema de retrocompatilidad. Básicamente queremos salir de él lo más rápido posible.
+
+
+-- del power:
+
+Modo real: modo en el que arrancan todos los x86, después
+de un power-up o reset. 1
+
+
+Modo protegido: este modo es el estado nativo del procesador
+
+
+____________________________
+
+2) 
+
+Podríamos tener un SO en modo real pero:
+
+- no tendríamos la abstracción que nos brinda el modo protegido con los niveles de privilegios,
+
+- tendría solo 1MB de capacidad, por lo que sería EXTREMADAMENTE CHICO.
+
+- al no tener privilegios, la memoria puede ser leída y modificada por cualquiera. Lo cual trae riesgos de ciberseguridad, el sistema pierde rigidez, etc.
+
+De hecho un ejemplo de esto es MS-DOS
+
+
+____________________________
+
+3) 
+
+Que es la gdt?
+
+Es una tabla que contiene entradas llamadas "descriptores de segmento". Que proveen una dirección base de los segmentos, así como sus derechos de acceso, tipo e información de uso.
+
+El descriptor de segmento se compone por dos direcciones de 4 bytes c/u (32bits c/u):
+
+Direccion 1:
+Bits 0 a 15: Segment Limit 15:00
+Bts 16 a 31: Base Address 15:00
+
+Direccion 2:
+Bits 0 a 8: Base 23:16
+Bits 8 a 11: Type
+Bit 12: S
+Bits 13 a 14: DPL
+Bit 15: P
+Bits 16 a 19: Segment Limit 19:16
+Bit 20: AVL
+Bit 21: L
+Bit 22: D/B
+Bit 23: G
+Bits 24 a 31: Base 31:24
+
+Campo Limit: Especifica el tamano del segmento. Dependiendo del G granularity el limite al que llega.
+Base: Donde comienza el segmento.
+G: Granularidad del segmento. Si es de 1 byte a 1Mbyte (si es 0), o de 4kbyte a 4Gbytes (si es 1).
+P: Indica si el segmento esta presente en memoria(si esta en 1) o si no esta presente en memoria (si esta en 0)
+DPL: Indica el privilegio del segmento (de 0 a 3) donde 0 es el mas privilegiado. Controla el acceso al segmento.
+S: Describe si es un segmento del sistema(0 si es del sistema).
+
+¿Qué combinación de bits tendríamos que usar si
+queremos especificar un segmento para ejecución y lectura de código?
+
+seria el 1010 Execute/Read Code
+
+
+
+1) 
+0:15 Segment Limit (15:00)
+16:31 Base Address(15:00)
+32:39 // 0:7 Base(23:16)
+
+
+____________________________
+
+Cuenta tam 817MiB
+
+1 MiB = 1024 B x 1024 B = 1048576 B
+
+1048576 B x 817 = 856686592 B
+
+1 KB = 1024 B => 4 KB = 4096 B
+
+856686592 B / 4096 B = 219152 es la cant de bytes que necesitamos
+
+En binario: 0011 0011 0001 0000 0000
+
+Esto ponemos en el segment limit
+
+____________________________
+6) extern gdt_entry_t gdt[] es la GDT en si misma. Es un arreglo de descriptores de segmento. 
+extern gdt_descriptor_t GDT_DESC nos indica donde comienza la GDT (GDTR) y que tamaño tiene (GDTR).
+
+____________________________
+7) 
+
+
+
+
+
+
+
+
+
+
+

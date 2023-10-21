@@ -143,17 +143,14 @@ push rbp
 mov rbp, rsp
 
 push r12
-push r13 ;los pusheo porque son no volatiles, los voy a usar para guardar mis parametros y no perderlos cuando llame 
-         ; a malloc.
+push r13 ;los pusheo porque son no volatiles, los voy a usar para guardar mis parametros y no perderlos cuando llame a malloc.
 push r14
 push r15 ;los voy a usar para guardar en no volatiles la cantidad de pagos Aprob/Desap
+push rbx    
 
-push rbx
-;sub rsp, 8 ;alineo la pila ;al hacer esto obteniamos segmentation fault al salir de la funcion.
+sub rsp, 8 ;alineo la pila ;al hacer esto obteniamos segmentation fault al salir de la funcion.
 
-xor r12, r12
 mov r12, rdi ;r12 tiene la lista de pagos
-xor r13, r13
 mov r13, rsi ;r13 tiene el usuario
 
 ;ahora queremos armar el struct respuesta.
@@ -266,6 +263,8 @@ jmp .cicloAcum
 xor rax, rax
 mov rax, rbx
 
+
+add rsp, 8
 pop rbx
 pop r15
 pop r14

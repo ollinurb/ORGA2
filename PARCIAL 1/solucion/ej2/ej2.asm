@@ -51,7 +51,6 @@ psrld xmm3, 16
 
 ;ahora tenemos que acumular para cada respuesta los compare.
 
-pxor xmm4, xmm4
 movdqu xmm4, xmm1
 pcmpgtd xmm4, xmm2 ;en xmm4 tengo los R > G
 

@@ -5,13 +5,13 @@ align 16
 mask_alphas times 2 dq 0x0000FFFFFFFFFFFF
 packed_3_div times 4 dd 0x00000003
 pix1_template times 4 db 0x00, 0x00, 0x00, 0xFF
-pix2_template times 4 db 0x00, 0x00, 0xFF, 0xFF
-pix3_template_a times 4 db 0x00, 0x00, 0xFF, 0x00
+pix2_template times 4 db 0xFF, 0x00, 0x00, 0xFF
+pix3_template_a times 4 db 0xFF, 0x00, 0x00, 0x00
 pix3_template_b times 4 db 0x00, 0xFF, 0x00, 0xFF
 pix4_template_a times 4 db 0x00, 0xFF, 0x00, 0x00
-pix4_template_b times 4 db 0xFF, 0x00, 0x00, 0xFF
-pix5_template_a times 4 db 0xFF, 0x00, 0x00, 0x00
-pix5_template_b times 4 db 0x00, 0x00, 0x00, 0x00
+pix4_template_b times 4 db 0x00, 0x00, 0xFF, 0xFF
+pix5_template_a times 4 db 0x00, 0x00, 0xFF, 0x00
+pix5_template_b times 4 db 0x00, 0x00, 0x00, 0xFF
 
 pix5_template dd 0x000000FF
 align 16
@@ -93,8 +93,6 @@ temperature_asm:
     packusdw xmm1, xmm1
     packuswb xmm1, xmm1
     pmovzxbd xmm1, xmm1
-    pslld xmm1, 24
-    psrld xmm1, 8
     movdqu xmm2, [pix1_template]
     por xmm1, xmm2
     ;XMM1 TIENE TODOS LOS PIXELES APLICANDO LA OPC 1 DE LA FUNCION
@@ -122,12 +120,10 @@ temperature_asm:
     packuswb xmm3, xmm3
     pmovzxbd xmm3, xmm3
     movdqu xmm4, [pix3_template_a]
-    pslld xmm3, 24
-    psrld xmm3, 8
-    psubw xmm4, xmm3
-    psrld xmm3, 16
-    por xmm3, xmm4
-    movdqu xmm4, [pix3_template_b]
+    psubw xmm4, xmm3 ;255 - blue en el blue
+    pslld xmm3, 16 ;movemos el t modificado (sin el 255-) al red
+    por xmm3, xmm4 ;combinamos las dos cosas
+    movdqu xmm4, [pix3_template_b] ;green y alpha en 255
     por xmm3, xmm4
     ;XMM3 TIENE TODOS LOS PIXELES APLICANDO LA OPC 3 DE LA FUNCION
 
@@ -156,10 +152,11 @@ temperature_asm:
     packuswb xmm5, xmm5
     pmovzxbd xmm5, xmm5
     movdqu xmm6, [pix5_template_a]
-    psrld xmm5, 24
+    pslld xmm5, 24
+    psrld xmm5, 8
     psubd xmm6, xmm5
     movdqa xmm5, [pix5_template_b]
-    por xmm5, xmm6
+    por xmm5, xmm6  
     ;XMM5 TIENE TODOS LOS PIXELES APLICANDO LA OPC 5 DE LA FUNCION
 
     ;ahora tenemos que armar las mascaras para cada t que tenemos en xmm0.
@@ -169,8 +166,6 @@ temperature_asm:
 
     ; si 31 es mayor a los T, guarda 1. hay que bajar de 32 a 31.
     movdqa xmm11, [packed_32_doubles]
-    movdqa xmm12, [packed_1_doubles]
-    psubd xmm11, xmm12
     movdqu xmm6, xmm11
     pcmpgtd xmm6, xmm0
     ;M1 en xmm6      T < 32
@@ -178,6 +173,8 @@ temperature_asm:
     ;si 96 es mayor a los T, y si t es mayor a 31
     ;usar 2 mascaras y combinarlas con un AND
     movdqa xmm7, xmm0
+    movdqa xmm12, [packed_1_doubles]
+    psubd xmm11, xmm12
     pcmpgtd xmm7, xmm11 ;los t mayores a 31
     movdqa xmm8, [packed_96_doubles]
     pcmpgtd xmm8, xmm0

@@ -84,11 +84,14 @@ Cuenta tam 817MiB
 
 1048576 B x 817 = 856686592 B
 
+
+
+
 1 KB = 1024 B => 4 KB = 4096 B
 
 856686592 B / 4096 B = 219152 es la cant de bytes que necesitamos
 
-En binario: 0011 0011 0001 0000 0000
+En binario: 0011 0011 0001 0000 0000 (o 0x33100)
 
 Esto ponemos en el segment limit
 
@@ -97,12 +100,12 @@ ____________________________
 extern gdt_descriptor_t GDT_DESC nos indica donde comienza la GDT (GDTR) y que tamaño tiene (GDTR).
 
 ____________________________
-7) 
+10) LGDT-Load Global/Interrupt Descriptor Table Register
 
+Sirve para cargar la GDT en una dirección de memoria
 
-
-
-
+En el código está en: gdt.c:gdt_descriptor_t GDT_DESC
+En particular en el segundo atributo de este struct
 
 
 

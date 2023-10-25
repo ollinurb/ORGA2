@@ -11,7 +11,7 @@
 
 /* Misc */
 /* -------------------------------------------------------------------------- */
-// Y Filas
+// Y Filas00
 #define SIZE_N 40
 #define ROWS   SIZE_N
 
@@ -33,21 +33,28 @@
 
 /* Offsets en la gdt */
 /* -------------------------------------------------------------------------- */
-#define GDT_OFF_NULL_DESC (GDT_IDX_NULL_DESC << 3)
+#define GDT_OFF_NULL_DESC 0(GDT_IDX_NULL_DESC << 3)
 #define GDT_OFF_VIDEO  (GDT_IDX_VIDEO << 3)
 
 /* COMPLETAR - Valores para los selectores de segmento de la GDT 
  * Definirlos a partir de los índices de la GDT, definidos más arriba 
  * Hint: usar operadores "<<" y "|" (shift y or) */
+#define GDT_LIMIT_LOW(limit)  (uint16_t)(((uint32_t)(limit)) & 0x0000FFFF)
+#define GDT_LIMIT_HIGH(limit) (uint8_t)((((uint32_t)(limit)) >> 16) & 0x0F)
 
+#define GDT_BASE_LOW(base)  (uint16_t)(((uint32_t)(base)) & 0x0000FFFF)
+#define GDT_BASE_MID(base)  (uint8_t)((((uint32_t)(base)) >> 16) & 0xFF)
+#define GDT_BASE_HIGH(base) (uint8_t)((((uint32_t)(base)) >> 24) & 0xFF)
 #define TI_SEL 0
-#define RPL_3 0b11
-#define RPL_0 0b00
+#define RPL_3 3
+#define RPL_0 0
 
+#define DPL_3 3
+#define DPL_0 0
 
 #define GDT_CODE_0_SEL (GDT_IDX_CODE_0 << 3) | (TI_SEL << 2) | RPL_0
-#define GDT_DATA_0_SEL (GDT_IDX_CODE_3 << 3) | (TI_SEL << 2) | RPL_3
-#define GDT_CODE_3_SEL (GDT_IDX_DATA_0 << 3) | (TI_SEL << 2) | RPL_0
+#define GDT_DATA_0_SEL (GDT_IDX_DATA_0 << 3) | (TI_SEL << 2) | RPL_0
+#define GDT_CODE_3_SEL (GDT_IDX_CODE_3 << 3) | (TI_SEL << 2) | RPL_3
 #define GDT_DATA_3_SEL (GDT_IDX_DATA_3 << 3) | (TI_SEL << 2) | RPL_3
 
 // Macros para trabajar con segmentos de la GDT.
@@ -65,10 +72,23 @@
 #define GDT_BASE_HIGH(base) (uint8_t)((((uint32_t)(base)) >> 24) & 0xFF)
 
 /* COMPLETAR - Valores de atributos */ 
-//#define DESC_CODE_DATA ??
-//#define DESC_SYSTEM    ??
-//#define D_COFLAT_SEGM_SIZE   ??
+#define DESC_CODE_DATA 1
+#define DESC_SYSTEM    0
+#define DESC_TYPE_EXECUTE_READ 10
+#define DESC_TYPE_READ_WRITE 2
+
+#define DESC_P 1
+#define DESC_AVL 0
+#define DESC_L 0
+#define DESC_DEF_OP_SIZE 1
+#define DESC_G 1
+
+
+/* COMPLETAR - Tamaños de segmentos*/
+#define FLAT_SEGM_SIZE 817*1024*1024
+#define FLAT_SEGM_BASE 0
 //#define VIDEO_SEGM_SIZE  ??
+
 
 
 /* Direcciones de memoria */

@@ -40,6 +40,73 @@ gdt_entry_t gdt[GDT_COUNT] = {
       macros allí definidas.
       Tomen el descriptor nulo como ejemplo y definan el resto.
      */
+    [GDT_IDX_CODE_0] =
+        {
+            .limit_15_0 = GDT_LIMIT_LOW(GDT_LIMIT_4KIB(FLAT_SEGM_SIZE)),
+            .base_15_0 = GDT_BASE_LOW(FLAT_SEGM_BASE),
+            .base_23_16 = GDT_BASE_MID(FLAT_SEGM_BASE),
+            .type = DESC_TYPE_EXECUTE_READ,
+            .s = DESC_CODE_DATA,
+            .dpl = DPL_0,
+            .p = DESC_P,
+            .limit_19_16 = GDT_LIMIT_HIGH(GDT_LIMIT_4KIB(FLAT_SEGM_SIZE)),
+            .avl = DESC_AVL,
+            .l = DESC_L,
+            .db = DESC_DEF_OP_SIZE,
+            .g = DESC_G,
+            .base_31_24 = GDT_BASE_HIGH(FLAT_SEGM_BASE),
+        },
+    
+    [GDT_IDX_CODE_3] =
+        {
+            .limit_15_0 = GDT_LIMIT_LOW(GDT_LIMIT_4KIB(FLAT_SEGM_SIZE)),
+            .base_15_0 = GDT_BASE_LOW(FLAT_SEGM_BASE),
+            .base_23_16 = GDT_BASE_MID(FLAT_SEGM_BASE),
+            .type = DESC_TYPE_EXECUTE_READ,
+            .s = DESC_CODE_DATA,
+            .dpl = DPL_3,
+            .p = DESC_P,
+            .limit_19_16 = GDT_LIMIT_HIGH(GDT_LIMIT_4KIB(FLAT_SEGM_SIZE)),
+            .avl = DESC_AVL,
+            .l = DESC_L,
+            .db = DESC_DEF_OP_SIZE,
+            .g = DESC_G,
+            .base_31_24 = GDT_BASE_HIGH(FLAT_SEGM_BASE),
+        },
+    
+    [GDT_IDX_DATA_0] =
+        {
+            .limit_15_0 = GDT_LIMIT_LOW(GDT_LIMIT_4KIB(FLAT_SEGM_SIZE)),
+            .base_15_0 = GDT_BASE_LOW(FLAT_SEGM_BASE),
+            .base_23_16 = GDT_BASE_MID(FLAT_SEGM_BASE),
+            .type = DESC_TYPE_READ_WRITE,
+            .s = DESC_CODE_DATA,
+            .dpl = DPL_0,
+            .p = DESC_P,
+            .limit_19_16 = GDT_LIMIT_HIGH(GDT_LIMIT_4KIB(FLAT_SEGM_SIZE)),
+            .avl = DESC_AVL,
+            .l = DESC_L,
+            .db = DESC_DEF_OP_SIZE,
+            .g = DESC_G,
+            .base_31_24 = GDT_BASE_HIGH(FLAT_SEGM_BASE),
+        },
+    
+    [GDT_IDX_DATA_3] =
+        {
+            .limit_15_0 = GDT_LIMIT_LOW(GDT_LIMIT_4KIB(FLAT_SEGM_SIZE)),
+            .base_15_0 = GDT_BASE_LOW(FLAT_SEGM_BASE),
+            .base_23_16 = GDT_BASE_MID(FLAT_SEGM_BASE),
+            .type = DESC_TYPE_READ_WRITE,
+            .s = DESC_CODE_DATA,
+            .dpl = DPL_3,
+            .p = DESC_P,
+            .limit_19_16 = GDT_LIMIT_HIGH(GDT_LIMIT_4KIB(FLAT_SEGM_SIZE)),
+            .avl = DESC_AVL,
+            .l = DESC_L,
+            .db = DESC_DEF_OP_SIZE,
+            .g = DESC_G,
+            .base_31_24 = GDT_BASE_HIGH(FLAT_SEGM_BASE),
+        }
     
 };
 

@@ -7,13 +7,21 @@
 
 global start
 
-
 ; COMPLETAR - Agreguen declaraciones extern según vayan necesitando
 
-; COMPLETAR - Definan correctamente estas constantes cuando las necesiten
-;%define CS_RING_0_SEL ??   
-;%define DS_RING_0_SEL ??   
+extern GDT_DESC ; a confirmar si es así. es para el start en rm, utilizamos LDTR para cargar la GDT con esta variable (ubicada en gdt.c) 
 
+; COMPLETAR - Definan correctamente estas constantes cuando las necesiten
+
+%define GDT_IDX_CODE_0 1
+%define GDT_IDX_DATA_0 3
+
+%define TI_SEL 0
+%define RPL_3 11b
+%define RPL_0 00b
+
+%define CS_RING_0_SEL (GDT_IDX_CODE_0 << 3) | (TI_SEL << 2) | RPL_0
+%define DS_RING_0_SEL (GDT_IDX_DATA_0 << 3) | (TI_SEL << 2) | RPL_0
 
 BITS 16
 ;; Saltear seccion de datos
@@ -37,6 +45,7 @@ BITS 16
 start:
     ; COMPLETAR - Deshabilitar interrupciones
 
+    cli
 
     ; Cambiar modo de video a 80 X 50
     mov ax, 0003h
@@ -49,10 +58,17 @@ start:
     ; (revisar las funciones definidas en print.mac y los mensajes se encuentran en la
     ; sección de datos)
 
+    print_text_rm start_rm_msg, start_rm_len, 0x02, 5, 5
+
+
     ; COMPLETAR - Habilitar A20
     ; (revisar las funciones definidas en a20.asm)
 
+    call A20_enable
+
     ; COMPLETAR - Cargar la GDT
+
+    LGDT [GDT_DESC]
 
     ; COMPLETAR - Setear el bit PE del registro CR0
 

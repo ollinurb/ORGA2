@@ -45,6 +45,7 @@
 #define GDT_BASE_LOW(base)  (uint16_t)(((uint32_t)(base)) & 0x0000FFFF)
 #define GDT_BASE_MID(base)  (uint8_t)((((uint32_t)(base)) >> 16) & 0xFF)
 #define GDT_BASE_HIGH(base) (uint8_t)((((uint32_t)(base)) >> 24) & 0xFF)
+
 #define TI_SEL 0
 #define RPL_3 3
 #define RPL_0 0
@@ -56,6 +57,7 @@
 #define GDT_DATA_0_SEL (GDT_IDX_DATA_0 << 3) | (TI_SEL << 2) | RPL_0
 #define GDT_CODE_3_SEL (GDT_IDX_CODE_3 << 3) | (TI_SEL << 2) | RPL_3
 #define GDT_DATA_3_SEL (GDT_IDX_DATA_3 << 3) | (TI_SEL << 2) | RPL_3
+#define GDT_VIDEO_SEL (GDT_IDX_VIDEO << 3) | (TI_SEL << 2) | RPL_0
 
 // Macros para trabajar con segmentos de la GDT.
 
@@ -81,13 +83,14 @@
 #define DESC_AVL 0
 #define DESC_L 0
 #define DESC_DEF_OP_SIZE 1
-#define DESC_G 1
+#define DESC_G_0 0
+#define DESC_G_1 1
 
 
 /* COMPLETAR - Tamaños de segmentos*/
 #define FLAT_SEGM_SIZE 817*1024*1024
 #define FLAT_SEGM_BASE 0
-//#define VIDEO_SEGM_SIZE  ??
+#define VIDEO_SEGM_SIZE 50*80*2
 
 
 

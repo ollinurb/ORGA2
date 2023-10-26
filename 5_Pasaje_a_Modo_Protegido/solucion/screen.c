@@ -70,4 +70,9 @@ void screen_draw_box(uint32_t fInit, uint32_t cInit, uint32_t fSize,
 }
 
 void screen_draw_layout(void) {
+
+  screen_draw_box(0, 0, VIDEO_FILS, VIDEO_COLS, 0, 0);
+
+  char* string_nombre = "Grupo 9: Joaquin Campos Haedo, Lautaro Giraldes, Bruno Bruzzo";
+  print(string_nombre, 10, 40, 10);
 }

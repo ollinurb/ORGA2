@@ -9,7 +9,9 @@ global start
 
 ; COMPLETAR - Agreguen declaraciones extern según vayan necesitando
 
-extern GDT_DESC ; a confirmar si es así. es para el start en rm, utilizamos LDTR para cargar la GDT con esta variable (ubicada en gdt.c) 
+extern GDT_DESC
+extern screen_draw_layout
+
 
 ; COMPLETAR - Definan correctamente estas constantes cuando las necesiten
 
@@ -22,6 +24,8 @@ extern GDT_DESC ; a confirmar si es así. es para el start en rm, utilizamos LDT
 
 %define CS_RING_0_SEL (GDT_IDX_CODE_0 << 3) | (TI_SEL << 2) | RPL_0
 %define DS_RING_0_SEL (GDT_IDX_DATA_0 << 3) | (TI_SEL << 2) | RPL_0
+
+%define STACK_BASE 0x25000
 
 BITS 16
 ;; Saltear seccion de datos
@@ -104,7 +108,7 @@ modo_protegido:
 
     ; COMPLETAR - Establecer el tope y la base de la pila
 
-    mov ebp, 0x25000
+    mov ebp, STACK_BASE
     mov esp, ebp
 
     ; COMPLETAR - Imprimir mensaje de bienvenida - MODO PROTEGIDO
@@ -113,7 +117,7 @@ modo_protegido:
 
     ; COMPLETAR - Inicializar pantalla
     
-    
+    call screen_draw_layout
 
     ; Ciclar infinitamente 
     mov eax, 0xFFFF

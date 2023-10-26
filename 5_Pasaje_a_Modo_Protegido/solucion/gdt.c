@@ -53,7 +53,7 @@ gdt_entry_t gdt[GDT_COUNT] = {
             .avl = DESC_AVL,
             .l = DESC_L,
             .db = DESC_DEF_OP_SIZE,
-            .g = DESC_G,
+            .g = DESC_G_1,
             .base_31_24 = GDT_BASE_HIGH(FLAT_SEGM_BASE),
         },
     
@@ -70,7 +70,7 @@ gdt_entry_t gdt[GDT_COUNT] = {
             .avl = DESC_AVL,
             .l = DESC_L,
             .db = DESC_DEF_OP_SIZE,
-            .g = DESC_G,
+            .g = DESC_G_1,
             .base_31_24 = GDT_BASE_HIGH(FLAT_SEGM_BASE),
         },
     
@@ -87,7 +87,7 @@ gdt_entry_t gdt[GDT_COUNT] = {
             .avl = DESC_AVL,
             .l = DESC_L,
             .db = DESC_DEF_OP_SIZE,
-            .g = DESC_G,
+            .g = DESC_G_1,
             .base_31_24 = GDT_BASE_HIGH(FLAT_SEGM_BASE),
         },
     
@@ -104,9 +104,27 @@ gdt_entry_t gdt[GDT_COUNT] = {
             .avl = DESC_AVL,
             .l = DESC_L,
             .db = DESC_DEF_OP_SIZE,
-            .g = DESC_G,
+            .g = DESC_G_1,
             .base_31_24 = GDT_BASE_HIGH(FLAT_SEGM_BASE),
+        },
+
+    [GDT_IDX_VIDEO] =
+        {
+            .limit_15_0 = GDT_LIMIT_LOW(VIDEO_SEGM_SIZE),
+            .base_15_0 = GDT_BASE_LOW(VIDEO),
+            .base_23_16 = GDT_BASE_MID(VIDEO),
+            .type = DESC_TYPE_READ_WRITE,
+            .s = DESC_CODE_DATA,
+            .dpl = DPL_0,
+            .p = DESC_P,
+            .limit_19_16 = GDT_LIMIT_HIGH(VIDEO_SEGM_SIZE),
+            .avl = DESC_AVL,
+            .l = DESC_L,
+            .db = DESC_DEF_OP_SIZE,
+            .g = DESC_G_0,
+            .base_31_24 = GDT_BASE_HIGH(VIDEO),
         }
+
     
 };
 

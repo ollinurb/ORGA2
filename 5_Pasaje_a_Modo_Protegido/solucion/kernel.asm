@@ -72,9 +72,18 @@ start:
 
     ; COMPLETAR - Setear el bit PE del registro CR0
 
+    mov eax, cr0
+    
+    or eax, 1
+
+    mov cr0, eax
+
     ; COMPLETAR - Saltar a modo protegido (far jump)
     ; (recuerden que un far jmp se especifica como jmp CS_selector:address)
     ; Pueden usar la constante CS_RING_0_SEL definida en este archivo
+
+    jmp CS_RING_0_SEL:modo_protegido
+
 
 BITS 32
 modo_protegido:
@@ -82,13 +91,30 @@ modo_protegido:
     ; Establecer selectores de segmentos DS, ES, GS, FS y SS en el segmento de datos de nivel 0
     ; Pueden usar la constante DS_RING_0_SEL definida en este archivo
 
+    mov ax, DS_RING_0_SEL
+    
+    mov ds, ax
+    mov es, ax
+    mov gs, ax
+    mov fs, ax
+    mov ss, ax
+
+    ; la convención de intel dice que si no usamos es, gs y fs: que los seteemos en 0.
+    ; por qué no lo hacemos así? los vamos a usar en el futuro?
+
     ; COMPLETAR - Establecer el tope y la base de la pila
+
+    mov ebp, 0x25000
+    mov esp, ebp
 
     ; COMPLETAR - Imprimir mensaje de bienvenida - MODO PROTEGIDO
 
+    print_text_pm start_pm_msg, start_pm_len, 0x02, 5, 5
+
     ; COMPLETAR - Inicializar pantalla
     
-   
+    
+
     ; Ciclar infinitamente 
     mov eax, 0xFFFF
     mov ebx, 0xFFFF

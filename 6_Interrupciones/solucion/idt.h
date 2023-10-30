@@ -12,7 +12,12 @@
 #include "types.h"
 
 // COMPLETAR: Definir INTERRUPT_GATE_TYPE con el valor correspondiente
-#define INTERRUPT_GATE_TYPE ???
+#define INTERRUPT_GATE_TYPE 14 // 1110
+
+/* Misc. Defines */
+#define INT_GATE_DPL_0 0
+#define INT_GATE_DPL_3 3
+#define INT_GATE_P 1
 
 /* Struct de descriptor de IDT */
 typedef struct str_idt_descriptor {

@@ -55,7 +55,7 @@ idt_descriptor_t IDT_DESC = {sizeof(idt) - 1, (uint32_t)&idt};
     .offset_31_16 = HIGH_16_BITS(&_isr##numero),                               \
     .offset_15_0 = LOW_16_BITS(&_isr##numero),                                 \
     .segsel = GDT_CODE_3_SEL,                                                  \
-    .type = INTERRUPT_GATE_TYPE                                                               \
+    .type = INTERRUPT_GATE_TYPE,                                                          \
     .dpl = INT_GATE_DPL_3,                                                                  \
     .present = INT_GATE_P                                                               \
   }
@@ -90,14 +90,14 @@ void idt_init() {
   TIMER TICK: INT 32 -- IRQ0
   KEYBOARD: INT 33 -- IRQ1 
   */
-  IDT_ENTRY0(32)
-  IDT_ENTRY0(33)
+  IDT_ENTRY0(32);
+  IDT_ENTRY0(33);
 
 
   // COMPLETAR: Syscalls
 
-  IDT_ENTRY3(88)
-  IDT_ENTRY3(98)
+  IDT_ENTRY3(88);
+  IDT_ENTRY3(98);
 }
 
 const char* code2exception[] = {"Divide Error #DE [0]",

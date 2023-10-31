@@ -12,6 +12,7 @@ global start
 extern GDT_DESC
 extern screen_draw_layout
 extern IDT_DESC
+extern idt_init
 
 
 ; COMPLETAR - Definan correctamente estas constantes cuando las necesiten
@@ -110,9 +111,7 @@ modo_protegido:
     ; COMPLETAR - Establecer el tope y la base de la pila
 
     mov ebp, STACK_BASE
-    mov esp, ebp
-
-    ; COMPLETAR - Imprimir mensaje de bienvenida - MODO PROTEGIDO
+        ; COMPLETAR - Imprimir mensaje de bienvenida - MODO PROTEGIDO
 
     print_text_pm start_pm_msg, start_pm_len, 0x02, 5, 5
 
@@ -121,10 +120,11 @@ modo_protegido:
     call screen_draw_layout
 
     ; Inicializar IDT
-
+    call idt_init
     lidt [IDT_DESC]
 
     ; Ciclar infinitamente 
+    .ciclo:
     mov eax, 0xFFFF
     mov ebx, 0xFFFF
     mov ecx, 0xFFFF

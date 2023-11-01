@@ -13,6 +13,8 @@ extern GDT_DESC
 extern screen_draw_layout
 extern IDT_DESC
 extern idt_init
+extern pic_reset
+extern pic_enable
 
 
 ; COMPLETAR - Definan correctamente estas constantes cuando las necesiten
@@ -111,7 +113,7 @@ modo_protegido:
     ; COMPLETAR - Establecer el tope y la base de la pila
 
     mov ebp, STACK_BASE
-        ; COMPLETAR - Imprimir mensaje de bienvenida - MODO PROTEGIDO
+    ; COMPLETAR - Imprimir mensaje de bienvenida - MODO PROTEGIDO
 
     print_text_pm start_pm_msg, start_pm_len, 0x02, 5, 5
 
@@ -123,6 +125,15 @@ modo_protegido:
     call idt_init
     lidt [IDT_DESC]
 
+    ;Inicializar interrupciones / PIC
+    call pic_reset
+    call pic_enable
+    sti
+
+    ;aca podriamos testear interrupciones usando la isntruccion int
+    .test_int_reloj:
+    int 0x20 ;deberia ser la interrupcion de clock
+    
     ; Ciclar infinitamente 
     .ciclo:
     mov eax, 0xFFFF

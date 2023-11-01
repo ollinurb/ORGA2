@@ -13,8 +13,8 @@ BITS 32
 ;; PIC
 extern pic_finish1
 extern kernel_exception
-
 extern process_scancode
+extern pic_disable
 
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
@@ -81,7 +81,7 @@ extern process_scancode
 global _isr%1
 
 _isr%1:
-  ISRc %1
+  ISRc %1 
 %endmacro
 
 ; ISR That doesn't push an exception code.
@@ -122,13 +122,47 @@ ISRNE 20
 global _isr32
 ; COMPLETAR: Implementar la rutina
 _isr32:
+    ;prologo PREGUNTA: Hace falta pushear EBP si no usamos el stack?
+    ;push EFLAGS
+    ;push cs
+    ;push EIP
+    pushad
+    .clockeo: ;para debuggeo, borrar
+    call pic_disable
+    call next_clock
+    call pic_finish1
+    jmp .clockeo ;para debuggeo, borrar
+    popad
+
+    ;epilogo
+    ;pop EIP
+    ;pop cs
+    ;pop EFLAGS
     iret
 
 ;; Rutina de atención del TECLADO
 ;; -------------------------------------------------------------------------- ;;
 global _isr33
 ; COMPLETAR: Implementar la rutina
+
 _isr33:
+    ;prologo PREGUNTA: Hace falta pushear EBP si no usamos el stack? habria que usar pushad?
+    pushad
+    ;push EFLAGS
+    ;push cs
+    ;push EIP
+
+    .loop:
+    call pic_disable
+    in al, 0x60
+    call process_scancode 
+
+    call pic_finish1
+    ;epilogo
+    ;pop EIP
+    ;pop cs
+    ;pop EFLAGS
+    popad
     iret
 
 
@@ -138,11 +172,22 @@ _isr33:
 global _isr88
 ; COMPLETAR: Implementar la rutina
 _isr88:
+    pushad
+
+    mov eax, 0x58
+
+    popad
     iret
 
 global _isr98
 ; COMPLETAR: Implementar la rutina
 _isr98:
+    pushad
+
+    mov eax, 0x62
+
+    popad
+
     iret
 
 ; PushAD Order

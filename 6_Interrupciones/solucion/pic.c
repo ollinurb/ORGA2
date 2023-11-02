@@ -27,7 +27,7 @@ void pic_reset() {
   //Rutina de remapeo
   //Inicializacion PIC1
     outb(PIC1_PORT, 0x11);          //ICW1: IRQs activas por flanco, Modo cascada, ICW4 Si.
-    outb(PIC1_PORT + 1, 0x20);      //ICW2: INT base para el PIC1 Tipo 8.
+    outb(PIC1_PORT + 1, 0x20);      //ICW2: INT base para el PIC1 Tipo 32.
     outb(PIC1_PORT + 1, 0x4);       //ICW3: PIC1 Master, tiene un Slave conectado a IRQ2
     outb(PIC1_PORT + 1, 0xFF);      //OCW1: Set o Clearel IMR
     outb(PIC1_PORT + 1, 0x1);       //ICW4: Modo No Buffered, Fin de Interrupcion Normal. Deshabilitamos las Interrupciones del PIC1

@@ -125,14 +125,16 @@ modo_protegido:
     call idt_init
     lidt [IDT_DESC]
 
+    ; sobre la idt, al hacer idt info: originalmente nos mostraba que estabamos en la idt en las interrup syscalls
+
     ;Inicializar interrupciones / PIC
     call pic_reset
     call pic_enable
     sti
 
     ;aca podriamos testear interrupciones usando la isntruccion int
-    .test_int_reloj:
-    int 0x20 ;deberia ser la interrupcion de clock
+    ;.test_int_reloj:
+    ;int 0x20 ;deberia ser la interrupcion de clock
     
     ; Ciclar infinitamente 
     .ciclo:

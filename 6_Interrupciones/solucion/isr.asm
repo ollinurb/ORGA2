@@ -123,21 +123,19 @@ global _isr32
 ; COMPLETAR: Implementar la rutina
 _isr32:
     ;prologo PREGUNTA: Hace falta pushear EBP si no usamos el stack?
-    ;push EFLAGS
-    ;push cs
-    ;push EIP
+    
+    ; prologo y epilogo
+    ; EIP, cs y EFLAGS se guardan al entrar a la rutina y se recuperan del stack con iret
+    
     pushad
-    .clockeo: ;para debuggeo, borrar
-    call pic_disable
+    ; .clockeo: ;para debuggeo, borrar
+    
+    ; call pic_disable no es necesario
     call next_clock
     call pic_finish1
-    jmp .clockeo ;para debuggeo, borrar
+    ; jmp .clockeo ;para debuggeo, borrar
     popad
 
-    ;epilogo
-    ;pop EIP
-    ;pop cs
-    ;pop EFLAGS
     iret
 
 ;; Rutina de atención del TECLADO
@@ -153,9 +151,16 @@ _isr33:
     ;push EIP
 
     .loop:
-    call pic_disable
+    
+    ; call pic_disable innecesario nuevamente
+    
+    ; recibimos el codigo de la tecla
     in al, 0x60
-    call process_scancode 
+    
+    ; la pasamos como parametro
+    push eax
+    call process_scancode
+    pop eax
 
     call pic_finish1
     ;epilogo

@@ -19,7 +19,11 @@
 	- [Filtro Pintar](4_SIMD/filters/Pintar_asm.asm)
 	- [Filtro Temperatura](4_SIMD/filters/temperature_asm.asm)
 
-- [Taller 5](5_Pasaje_a_Modo_Protegido)
+## Parte 2
+
+- [Taller 5 - Pasaje a Modo Protegido](5_Pasaje_a_Modo_Protegido)
+- [Taller 6 - Interrupciones](6_Interrupciones)
+- [Taller 7 - Paginación](7_Paginación)
 
 ## PARCIAL 1 
 - Repaso Primer Parcial

@@ -120,6 +120,7 @@ modo_protegido:
     call screen_draw_layout
 
     ; Ciclar infinitamente 
+    .ciclo:
     mov eax, 0xFFFF
     mov ebx, 0xFFFF
     mov ecx, 0xFFFF

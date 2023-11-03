@@ -1,0 +1,74 @@
+1)
+a) ¿Cuántos niveles de privilegio podemos definir en las estructuras de paginación?
+
+Podemos definir 2 niveles de privilegio: user y kernel.
+
+--------------------------
+b) ¿Cómo se traduce una dirección lógica en una dirección fı́sica? ¿Cómo participan la dirección lógica, el registro de
+control CR3, el directorio y la tabla de páginas? Recomendación: describan el proceso en pseudocódigo
+
+
+CR3 tiene en los 20 mas significativos los 
+
+Queremos traducir la dirección:
+
+virt = dir (10bits)|table(10bits)|offset(12bits) .
+
+shifteamos la parte alta y en esa tabla buscamos...
+idem parte media
+y ahi en la pag ponemos el offset
+
+--------------------------------
+c) ¿Cuál es el efecto de los siguientes atributos en las entradas de la tabla de página?
+
+D: bit que se activa cuando se accede a la página con un usuario con permiso de escritura
+
+A(accesed): bit que se activa cuando se accede a la página con un usuario con permiso de lectura o escritura. Se utiliza para hacer estadisticas como LRU
+
+PC(Cache disable): Si esta prendido, evita que se almacene la pagina en memoria rapida
+
+PWT(Write through): Hace que, al escribir, la escritura se refleje en cache y memoria a la vez; sino sólo se actualiza la memoria cuando se desaloja la lı́nea de caché.
+
+U/S: indica si la página puede ser accedida por el espacio de usuarix (bit en 1) o sólo supervisor/kernel (bit en 0).
+
+R/W: indica si la página puede leerse y escribirse (bit en 1) o sólo leerse (bit en 0).
+
+P(Present): indica si la página se encuentra cargada en memoria o no.
+
+-------------------------------
+d) ¿Qué sucede si los atributos U/S y R/W del directorio y de la tabla de páginas difieren? ¿Cuáles terminan siendo
+los atributos de una página determinada en ese caso? Hint: buscar la tabla Combined Page-Directory and Page-Table
+Protection del manual 3 de Intel
+
+Depende de la combinacion.
+
+-------------------------------
+e) Suponiendo que el código de la tarea ocupa dos páginas y utilizaremos una página para la pila de la tarea. ¿Cuántas
+páginas hace falta pedir a la unidad de manejo de memoria para el directorio, tablas de páginas y la memoria de una
+tarea?
+
+6:
+
+- 2 de código
+- 1 de stack
+- 1 de shared
+- 1 pagina para la page table nueva
+- 1 para su directorio de page tables
+
+-------------------------------
+f) Completen las entradas referentes a MMU de defines.h y comprendan la función y motivación de dichos defines:
+VIRT PAGE OFFSET(X) devuelve el offset asociado a una dirección virtual X
+VIRT PAGE TABLE(X) devuelve la tabla de páginas asociada a una dirección virtual X
+VIRT PAGE DIR(X) devuelve el directorio asociado a una dirección virtual X
+CR3 TO PAGE DIR(X) obtiene la dirección fı́sica del directorio donde X es el contenido del registro CR3.
+1 Entre paréntesis el nombre consistente con gdb
+3MMU ENTRY PADDR(X) obtiene la dirección fı́sica correspondiente, donde X es el campo address de 20 bits en una
+entrada de la tabla de páginas o del page directory
+
+Listo
+
+-------------------------------
+g) ¿Qué es el buffer auxiliar de traducción (translation lookaside buffer o TLB) y por qué es necesario purgarlo (tlbflush)
+al introducir modificaciones a nuestras estructuras de paginación (directorio, tabla de páginas)? ¿Qué atributos posee
+cada traducción en la TLB? Al desalojar una entrada determinada de la TLB ¿Se ve afectada la homóloga en la tabla
+original para algún caso?

@@ -37,6 +37,7 @@
 0x00004020 gdt
 0x00004000 GDT_DESC
 0x00001297 modo_protegido
+0x000012e8 modo_protegido.ciclo
 0x00000003 ok_len
 0x00001343 ok_msg
 0x00001599 print

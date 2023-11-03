@@ -136,8 +136,11 @@ modo_protegido:
     ;.test_int_reloj:
     ;int 0x20 ;deberia ser la interrupcion de clock
     
+
     ; Ciclar infinitamente 
     .ciclo:
+    int 88
+    
     mov eax, 0xFFFF
     mov ebx, 0xFFFF
     mov ecx, 0xFFFF

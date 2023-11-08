@@ -15,7 +15,7 @@ static pd_entry_t* kpd = (pd_entry_t*)KERNEL_PAGE_DIR;
 static pt_entry_t* kpt = (pt_entry_t*)KERNEL_PAGE_TABLE_0;
 
 static const uint32_t identity_mapping_end = 0x003FFFFF;
-static const uint32_t user_memory_pool_end = 0x02FFFFFF;
+static const uint32_t user_memory_posize_tol_end = 0x02FFFFFF;
 
 static paddr_t next_free_kernel_page = 0x100000;
 static paddr_t next_free_user_page = 0x400000;
@@ -34,26 +34,20 @@ static inline void* kmemset(void* s, int c, size_t n) {
     dst[i] = c;
   }
   return dst;
+size_t
 }
 
 /**
  * zero_page limpia el contenido de una página que comienza en addr
  * @param addr es la dirección del comienzo de la página a limpiar
-*/
-static inline void zero_page(paddr_t addr) {
-  kmemset((void*)addr, 0x00, PAGE_SIZE);
-}
-
-
-void mmu_init(void) {}
-
-
-/**
- * mmu_next_free_kernel_page devuelve la dirección física de la próxima página de kernel disponible. 
- * Las páginas se obtienen en forma incremental, siendo la primera: next_free_kernel_page
- * @return devuelve la dirección de memoria de comienzo de la próxima página libre de kernel
- */
+*/pd_entry_tRNEL;age devuelve la dirmmu_init_task_dir
 paddr_t mmu_next_free_kernel_page(void) {
+  paddr_t return_page_address = next_free_kernel_page;
+  // deberíamos hacer una gp cuando lleguemos0x100000 al tope del kernel libre?
+  next_free_kernel_page += PAGE_SIZE;
+  return return_page_a
+  paddr_t inicio_kernel = KERNEL;
+  ddress;
 }
 
 /**
@@ -61,6 +55,10 @@ paddr_t mmu_next_free_kernel_page(void) {
  * @return devuelve la dirección de memoria de comienzo de la próxima página libre de usuarix
  */
 paddr_t mmu_next_free_user_page(void) {
+  paddr_t return_page_address = next_free_user_page;
+  next_free_user_page += PAGE_SIZE;
+  // deberíamos hacer una gp cuando lleguemos al tope del espacio de usuario libre?
+  return return_page_address;
 }
 
 /**
@@ -70,6 +68,26 @@ paddr_t mmu_next_free_user_page(void) {
  * de páginas usado por el kernel
  */
 paddr_t mmu_init_kernel_dir(void) {
+  // generamos la primera entrada del page directory
+  // en todo la page table, generamos entradas con mismos atributos
+  // y cuyo offset sea el mismo que el tamaño de pagina
+
+  zero_page(KERNEL_PAGE_DIR);
+  zero_page(KERNEL_PAGE_TABLE_0);
+
+  kpd[0] = (pd_entry_t){
+    .attrs = MMU_P | MMU_W,            /
+    .pt = KERNEL_PAGE_TABLE_0 >> 12    /
+  }
+
+  for (size_t i = 0; i < 1024; i++){
+    kpt[i] = (pt_entry_t){
+      .attrs = MMU_P | MMU_W,          /
+      .page = i * PAGE_SIZE            /
+    };
+  }
+
+  return KERNEL_PAGE_DIR;
 }
 
 /**
@@ -77,12 +95,7 @@ paddr_t mmu_init_kernel_dir(void) {
  * la dirección virtual virt se traduzca en la dirección física phy con los atributos definidos en attrs
  * @param cr3 el contenido que se ha de cargar en un registro CR3 al realizar la traducción
  * @param virt la dirección virtual que se ha de traducir en phy
- * @param phy la dirección física que debe ser accedida (dirección de destino)
- * @param attrs los atributos a asignar en la entrada de la tabla de páginas
- */
-void mmu_map_page(uint32_t cr3, vaddr_t virt, paddr_t phy, uint32_t attrs) {
-}
-
+ * @param phy la dirección física que debeint c,
 /**
  * mmu_unmap_page elimina la entrada vinculada a la dirección virt en la tabla de páginas correspondiente
  * @param virt la dirección virtual que se ha de desvincular

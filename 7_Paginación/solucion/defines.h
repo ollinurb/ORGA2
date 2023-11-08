@@ -124,4 +124,7 @@
 #define KERNEL_PAGE_TABLE_0 (0x00026000)
 #define KERNEL_STACK        (0x00025000)
 
+
+#define KERNEL_DIRECTORY
+
 #endif //  __DEFINES_H__

@@ -15,7 +15,7 @@ extern IDT_DESC
 extern idt_init
 extern pic_reset
 extern pic_enable
-
+extern KERNEL_PAGE_DIR
 
 ; COMPLETAR - Definan correctamente estas constantes cuando las necesiten
 
@@ -139,6 +139,10 @@ modo_protegido:
     or eax, 0x8000 ;activar bit CR0.PG
 
     mov cr0, eax
+
+    ;inicializamos CR3
+
+    mov cr3, [KERNEL_PAGE_DIR]
 
     ;activamos interrupciones
 

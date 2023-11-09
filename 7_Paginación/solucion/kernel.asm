@@ -130,6 +130,18 @@ modo_protegido:
     ;Inicializar interrupciones / PIC
     call pic_reset
     call pic_enable
+
+
+    ;activamos paginación
+
+    mov eax, cr0
+    
+    or eax, 0x8000 ;activar bit CR0.PG
+
+    mov cr0, eax
+
+    ;activamos interrupciones
+
     sti
 
     ;aca podriamos testear interrupciones usando la isntruccion int

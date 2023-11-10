@@ -111,18 +111,17 @@ void mmu_map_page(uint32_t cr3, vaddr_t virt, paddr_t phy, uint32_t attrs) {
 	paddr_t pd = CR3_TO_PAGE_DIR(cr3);
 
 	// queremos verificar que la pde este presente con el bit P
-	paddr_t pde = pd + VIRT_PAGE_DIR(virt) * 4; //direccion de un pde. temporalmente le pusimos paddr pero da igual
 
 	pd_entry_t* pde_ptr = (pd_entry_t*) (pd + VIRT_PAGE_DIR(virt) * 4);		// apuntamos a esto-> |pd_entry que no sabemos si la direccion es valida|
-
-	if ( (pde_ptr->attrs & MMU_P) == 0 ) {
+	if ((pde_ptr->attrs & MMU_P) == 0){
 		paddr_t nueva = mmu_next_free_kernel_page(); // pagina nueva que vamos a tener que linkear a una pte y luego a esta pde
 		zero_page(nueva);
-
-		pt_entry_t pde_ptr = {
-      			.attrs = pde_ptr->attrs | attrs | MMU_P,  // marca error. no tipa bien
-      			.page = (nueva >> 12)		// shifteamos 12 posiciones porque page es la parte de la direccion de 20 bits (los otros sabemos que son 0)
+		pde_ptr->pt = nueva >> 12;
    		};
+		pde_ptr->attrs = pde_ptr->attrs | attrs | MMU_P;
+	pt_entry_t pte_ptr = {
+		.attrs = attrs | MMU_P,  // marca error. no tipa bien
+		.page =  phy >> 12       // shifteamos 12 posiciones porque page es la parte de la direccion de 20 bits (los otros sabemos que son 0)
 	}
 
 	tlbflush;

@@ -114,15 +114,14 @@ void mmu_map_page(uint32_t cr3, vaddr_t virt, paddr_t phy, uint32_t attrs) {
 
 	pd_entry_t* pde_ptr = (pd_entry_t*) (pd + VIRT_PAGE_DIR(virt) * 4);		// apuntamos a esto-> |pd_entry que no sabemos si la direccion es valida|
 	if ((pde_ptr->attrs & MMU_P) == 0){
-		paddr_t nueva = mmu_next_free_kernel_page(); // pagina nueva que vamos a tener que linkear a una pte y luego a esta pde
-		zero_page(nueva);
-		pde_ptr->pt = nueva >> 12;
-   		};
-		pde_ptr->attrs = pde_ptr->attrs | attrs | MMU_P;
-	pt_entry_t pte_ptr = {
-		.attrs = attrs | MMU_P,  // marca error. no tipa bien
-		.page =  phy >> 12       // shifteamos 12 posiciones porque page es la parte de la direccion de 20 bits (los otros sabemos que son 0)
-	}
+		paddr_t nueva_tabla = mmu_next_free_kernel_page(); // pagina nueva que vamos a tener que linkear a una pte y luego a esta pde
+		zero_page(nueva_tabla);
+		pde_ptr->pt = nueva_tabla >> 12;
+   	};
+	pde_ptr->attrs = pde_ptr->attrs | attrs | MMU_P;
+	pt_entry_t* pte_ptr = (pt_entry_t*) ((pde_ptr->pt << 12) + VIRT_PAGE_TABLE(virt) * 4);
+	pte_ptr->attrs = attrs | MMU_P;
+	pte_ptr->page = phy >> 12;
 
 	tlbflush;
 	

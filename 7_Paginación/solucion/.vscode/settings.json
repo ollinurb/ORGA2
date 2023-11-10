@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "defines.h": "c",
+        "kassert.h": "c",
+        "mmu.h": "c",
+        "types.h": "c"
+    }
+}

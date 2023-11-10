@@ -84,16 +84,16 @@ paddr_t mmu_init_kernel_dir(void) {
   	zero_page(KERNEL_PAGE_TABLE_0);
 
   	kpd[0] = (pd_entry_t){
-    		.attrs = MMU_P | MMU_W,            /
-    		.pt = KERNEL_PAGE_TABLE_0 >> 12    /
-  	}
+    	.attrs = MMU_P | MMU_W,
+    	.pt = KERNEL_PAGE_TABLE_0 >> 12
+  	};
 
   	for (size_t i = 0; i < 1024; i++){
     		kpt[i] = (pt_entry_t){
-      			.attrs = MMU_P | MMU_W,          /
-      			.page = i * PAGE_SIZE            /
-   		}
- 	 }
+      			.attrs = (MMU_P | MMU_W),
+      			.page = i
+   		};
+ 	}
   	return KERNEL_PAGE_DIR;
 }
 
@@ -106,6 +106,27 @@ paddr_t mmu_init_kernel_dir(void) {
  * @param attrs los atributos a asignar en la entrada de la tabla de páginas
  */
 void mmu_map_page(uint32_t cr3, vaddr_t virt, paddr_t phy, uint32_t attrs) {
+	
+	// tenemos el page directory en cr3. vamos a extraer la direccion del page directory
+	paddr_t pd = CR3_TO_PAGE_DIR(cr3);
+
+	// queremos verificar que la pde este presente con el bit P
+	paddr_t pde = pd + VIRT_PAGE_DIR(virt) * 4; //direccion de un pde. temporalmente le pusimos paddr pero da igual
+
+	pd_entry_t* pde_ptr = (pd_entry_t*) (pd + VIRT_PAGE_DIR(virt) * 4);		// apuntamos a esto-> |pd_entry que no sabemos si la direccion es valida|
+
+	if ( (pde_ptr->attrs & MMU_P) == 0 ) {
+		paddr_t nueva = mmu_next_free_kernel_page(); // pagina nueva que vamos a tener que linkear a una pte y luego a esta pde
+		zero_page(nueva);
+
+		pt_entry_t pde_ptr = {
+      			.attrs = pde_ptr->attrs | attrs | MMU_P,  // marca error. no tipa bien
+      			.page = (nueva >> 12)		// shifteamos 12 posiciones porque page es la parte de la direccion de 20 bits (los otros sabemos que son 0)
+   		};
+	}
+
+	tlbflush;
+	
 }
 
 /**

@@ -15,7 +15,9 @@ extern IDT_DESC
 extern idt_init
 extern pic_reset
 extern pic_enable
-extern KERNEL_PAGE_DIR
+extern mmu_init_kernel_dir
+
+;extern KERNEL_PAGE_DIR
 
 ; COMPLETAR - Definan correctamente estas constantes cuando las necesiten
 
@@ -131,6 +133,11 @@ modo_protegido:
     call pic_reset
     call pic_enable
 
+    ;inicializamos CR3
+
+    call mmu_init_kernel_dir
+
+    mov cr3, eax
 
     ;activamos paginación
 
@@ -140,9 +147,6 @@ modo_protegido:
 
     mov cr0, eax
 
-    ;inicializamos CR3
-
-    mov cr3, [KERNEL_PAGE_DIR]
 
     ;activamos interrupciones
 

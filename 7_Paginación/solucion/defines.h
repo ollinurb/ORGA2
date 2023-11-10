@@ -59,14 +59,30 @@
 #define GDT_BASE_MID(base)  (uint8_t)((((uint32_t)(base)) >> 16) & 0xFF)
 #define GDT_BASE_HIGH(base) (uint8_t)((((uint32_t)(base)) >> 24) & 0xFF)
 
+#define TI_SEL 0
+#define RPL_3 3
+#define RPL_0 0
+
+#define DPL_3 3
+#define DPL_0 0
+
 #define DESC_TYPE_EXECUTE_READ 0xA
 #define DESC_TYPE_READ_WRITE   0x2
 #define DESC_TYPE_32BIT_TSS    0x9
 
+/* COMPLETAR - Valores de atributos */ 
 #define DESC_CODE_DATA 1
 #define DESC_SYSTEM    0
 
+#define DESC_P 1
+#define DESC_AVL 0
+#define DESC_L 0
+#define DESC_DEF_OP_SIZE 1
+#define DESC_G_0 0
+#define DESC_G_1 1
+
 #define FLAT_SEGM_SIZE  (817U * (1 << 20))
+#define FLAT_SEGM_BASE 0
 #define VIDEO_SEGM_SIZE (80U * 50 * 2)
 
 /* Direcciones de memoria */

@@ -16,6 +16,9 @@ typedef struct pd_entry_t {
   uint32_t pt : 20;
 } __attribute__((packed)) pd_entry_t;
 
+// pt:attrs son 32 bits en total. pt son los 20 (mas significativos) y attrs los 12 (menos significativos)
+
+
 typedef struct pt_entry_t {
   uint32_t attrs : 12;
   uint32_t page : 20;

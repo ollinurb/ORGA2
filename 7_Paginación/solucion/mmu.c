@@ -133,10 +133,36 @@ void mmu_map_page(uint32_t cr3, vaddr_t virt, paddr_t phy, uint32_t attrs) {
  * @return la dirección física de la página desvinculada
  */
 paddr_t mmu_unmap_page(uint32_t cr3, vaddr_t virt) {
+	// tenemos que utilizar el cr3 que nos dieron
+	// de el vamos a poder sacar el pd
+
+	// con la parte de virt correspondiente al indice de pd, vamos a obtener el pde
+	// queremos ver si la pde esta marcada como present
+	//--------------------------------------------------------------------------------
+	
+	// tenemos el page directory en cr3. vamos a extraer la direccion del page directory
+	paddr_t pd = CR3_TO_PAGE_DIR(cr3);
+
+	// queremos verificar que la pde este presente con el bit P
+
+	pd_entry_t* pde_ptr = (pd_entry_t*) (pd + VIRT_PAGE_DIR(virt) * 4);
+	if ((pde_ptr->attrs & MMU_P) == 0){
+		tlbflush;
+
+		return (paddr_t) (pde_ptr->pt << 12);		// esto esta bien?
+   	} else {
+		pt_entry_t* pte_ptr = (pt_entry_t*) ((pde_ptr->pt << 12) + VIRT_PAGE_TABLE(virt) * 4);
+		pte_ptr->attrs = pte_ptr->attrs & 0xffe;	//seteamos p en 0. esto cuenta como hardcodear? como se podria hacer sino?
+		tlbflush;
+
+		// habría que hacer algo con next_free_kernel_page? ya que si estamos liberando
+
+		return (paddr_t) (pte_ptr->page << 12);
+	}
 
 }
 
-#define DST_VIRT_PAGE 0xA00000
+#define DST_VIRT_PAGE 0xA00000		// por que estas direcciones en particular? es algo arbitrario o siempre se usan estas?
 #define SRC_VIRT_PAGE 0xB00000
 
 /**
@@ -148,6 +174,23 @@ paddr_t mmu_unmap_page(uint32_t cr3, vaddr_t virt) {
  * la copia y luego desmapea las páginas. Usar la función rcr3 definida en i386.h para obtener el cr3 actual
  */
 void copy_page(paddr_t dst_addr, paddr_t src_addr) {
+
+	// mapeamos ambas direcciones fisicas para poder utilizarlas
+	mmu_map_page(rcr3(), DST_VIRT_PAGE, dst_addr, MMU_U | MMU_P);
+	mmu_map_page(rcr3(), SRC_VIRT_PAGE, src_addr, MMU_P);
+
+	for (size_t i = 0; i < PAGE_SIZE; i++) {
+		// accedemos a SRC_VIRT_PAGE + i y DST_VIRT_PAGE + i y copiamos byte a byte
+		uint8_t* dst = (DST_VIRT_PAGE + i);
+		uint8_t* src = (SRC_VIRT_PAGE + i);
+		
+		*dst = *src;		//se puede iterar page_size/4 veces (1024) y utilizar uint32_t para que esto sea mas eficiente?
+	}
+
+	mmu_unmap_page(rcr3(), DST_VIRT_PAGE);
+	mmu_unmap_page(rcr3(), SRC_VIRT_PAGE);
+	
+	tlbflush;
 }
 
  /**

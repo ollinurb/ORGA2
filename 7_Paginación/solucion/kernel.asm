@@ -33,6 +33,9 @@ extern mmu_init_kernel_dir
 
 %define STACK_BASE 0x25000
 
+
+
+
 BITS 16
 ;; Saltear seccion de datos
 jmp start
@@ -45,6 +48,13 @@ start_rm_len equ    $ - start_rm_msg
 
 start_pm_msg db     'Iniciando kernel en Modo Protegido'
 start_pm_len equ    $ - start_pm_msg
+
+
+;TEST_copy_page
+src_test_copy times 4096 db 0xf
+dst_test_copy times 4096 db 0xa 
+;---------------
+
 
 ;;
 ;; Seccion de código.
@@ -142,7 +152,7 @@ modo_protegido:
     ;activamos paginación
 
     mov eax, cr0
-    
+
     or eax, 0x8000 ;activar bit CR0.PG
 
     mov cr0, eax
@@ -156,6 +166,12 @@ modo_protegido:
     ;.test_int_reloj:
     ;int 0x20 ;deberia ser la interrupcion de clock
     
+    ; espacio de pruebas
+    ;src
+    push src_test_copy
+    ;dst
+    push dst_test_copy
+    call copy_page
 
     ; Ciclar infinitamente 
     .ciclo:

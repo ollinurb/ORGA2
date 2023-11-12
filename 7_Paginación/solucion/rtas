@@ -72,3 +72,21 @@ g) ¿Qué es el buffer auxiliar de traducción (translation lookaside buffer o T
 al introducir modificaciones a nuestras estructuras de paginación (directorio, tabla de páginas)? ¿Qué atributos posee
 cada traducción en la TLB? Al desalojar una entrada determinada de la TLB ¿Se ve afectada la homóloga en la tabla
 original para algún caso?
+
+-------------------------------
+
+Checkpoint3
+
+b) ¿Por qué es necesario mapear y desmapear las páginas de destino y fuente?
+
+Porque al acceder a la memoria el procesador siempre interpreta las direcciones que le pasemos como virtuales. Por eso no podemos utilizar las físicas.
+Luego, interpretamos que el desmapeado se realiza para liberar memoria que no está siendo usada, aunque no estamos totalmente seguros des desmapeado. 
+
+¿Qué función cumplen SRC VIRT PAGE y DST VIRT PAGE?
+
+Cumplen la funcion de direcciones virtuales momentaneas para poder acceder a las físicas que nos pasaron. Con ellas vamos a iterar sobre las paginas que nos
+dieron y copiar todo el contenido.
+
+¿Por qué es necesario obtener el CR3 con rcr3()?
+
+Porque el CR3, que es necesario para acceder al pd, es dependiente de la tarea, y no podríamos hardcodear uno.

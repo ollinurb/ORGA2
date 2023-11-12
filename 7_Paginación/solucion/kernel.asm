@@ -163,7 +163,7 @@ modo_protegido:
     
     ; espacio de pruebas
     .prueba:
-    call test_copy_page
+    call test_copy_page     ;test que no funciona
     ; ------------------
 
     ; Ciclar infinitamente 

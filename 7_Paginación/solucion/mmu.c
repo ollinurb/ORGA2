@@ -123,7 +123,7 @@ void mmu_map_page(uint32_t cr3, vaddr_t virt, paddr_t phy, uint32_t attrs) {
 	pte_ptr->attrs = attrs | MMU_P;
 	pte_ptr->page = phy >> 12;
 
-	tlbflush;
+	tlbflush();
 	
 }
 
@@ -147,13 +147,13 @@ paddr_t mmu_unmap_page(uint32_t cr3, vaddr_t virt) {
 
 	pd_entry_t* pde_ptr = (pd_entry_t*) (pd + VIRT_PAGE_DIR(virt) * 4);
 	if ((pde_ptr->attrs & MMU_P) == 0){
-		tlbflush;
+		tlbflush();
 
 		return (paddr_t) (pde_ptr->pt << 12);		// esto esta bien?
    	} else {
 		pt_entry_t* pte_ptr = (pt_entry_t*) ((pde_ptr->pt << 12) + VIRT_PAGE_TABLE(virt) * 4);
-		pte_ptr->attrs = pte_ptr->attrs & 0xffe;	//seteamos p en 0. esto cuenta como hardcodear? como se podria hacer sino?
-		tlbflush;
+		pte_ptr->attrs = pte_ptr->attrs & 0xffe;	//seteamos p en 0. esto cuenta como hardcodear? como se podria hacer sino? (pensamos !MMU_P pero no creemos que sea correcto)
+		tlbflush();
 
 		// habría que hacer algo con next_free_kernel_page? ya que si estamos liberando
 
@@ -179,18 +179,19 @@ void copy_page(paddr_t dst_addr, paddr_t src_addr) {
 	mmu_map_page(rcr3(), DST_VIRT_PAGE, dst_addr, MMU_U | MMU_P);
 	mmu_map_page(rcr3(), SRC_VIRT_PAGE, src_addr, MMU_P);
 
+
+	vaddr_t dst = DST_VIRT_PAGE;		// no sabemos por que no podemos usar 'uint8_t* dst = DST_VIRT_PAGE;'
+	vaddr_t src = SRC_VIRT_PAGE;
 	for (size_t i = 0; i < PAGE_SIZE; i++) {
 		// accedemos a SRC_VIRT_PAGE + i y DST_VIRT_PAGE + i y copiamos byte a byte
-		uint8_t* dst = (DST_VIRT_PAGE + i);
-		uint8_t* src = (SRC_VIRT_PAGE + i);
-		
-		*dst = *src;		//se puede iterar page_size/4 veces (1024) y utilizar uint32_t para que esto sea mas eficiente?
+
+		((uint8_t*)dst)[i] = ((uint8_t*)src)[i];		//se puede iterar page_size/4 veces (1024) y utilizar uint32_t para que esto sea mas eficiente?
 	}
 
-	mmu_unmap_page(rcr3(), DST_VIRT_PAGE);
+	mmu_unmap_page(rcr3(), DST_VIRT_PAGE);	// por que desmapeamos las direcciones si se podrian usar? intuimos que para no ocupar memoria innecesariamente. Pero una pagina parece muy poco
 	mmu_unmap_page(rcr3(), SRC_VIRT_PAGE);
 	
-	tlbflush;
+	tlbflush();
 }
 
  /**
@@ -199,6 +200,7 @@ void copy_page(paddr_t dst_addr, paddr_t src_addr) {
  * @return el contenido que se ha de cargar en un registro CR3 para la tarea asociada a esta llamada
  */
 paddr_t mmu_init_task_dir(paddr_t phy_start) {
+	
 }
 
 // COMPLETAR: devuelve true si se atendió el page fault y puede continuar la ejecución 
@@ -207,4 +209,33 @@ bool page_fault_handler(vaddr_t virt) {
   print("Atendiendo page fault...", 0, 0, C_FG_WHITE | C_BG_BLACK);
   // Chequeemos si el acceso fue dentro del area on-demand
   // En caso de que si, mapear la pagina
+}
+
+void test_copy_page(){
+	paddr_t pag1 = mmu_next_free_kernel_page();
+	paddr_t pag2 = mmu_next_free_kernel_page();
+
+	vaddr_t src = SRC_VIRT_PAGE;
+	vaddr_t dst = DST_VIRT_PAGE;
+	
+	mmu_map_page(rcr3(), src, pag1, MMU_U | MMU_P);
+	mmu_map_page(rcr3(), dst, pag2, MMU_P);
+
+	((uint32_t*)src)[0] = 9999;
+	((uint32_t*)dst)[0] = 5555;
+
+	mmu_unmap_page(rcr3(), src);
+	mmu_unmap_page(rcr3(), dst);
+
+	copy_page((paddr_t)pag1, (paddr_t) pag2);
+
+	mmu_map_page(rcr3(), src, pag1, MMU_U | MMU_P);
+	mmu_map_page(rcr3(), dst, pag2, MMU_P);
+
+	kassert( ((uint32_t*)src)[0] != ((uint32_t*)dst)[0], "No esta funcionando correctamente la funcion");
+
+	mmu_unmap_page(rcr3(), src);
+	mmu_unmap_page(rcr3(), dst);
+
+	return;
 }

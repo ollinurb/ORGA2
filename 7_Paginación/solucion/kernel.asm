@@ -16,6 +16,7 @@ extern idt_init
 extern pic_reset
 extern pic_enable
 extern mmu_init_kernel_dir
+extern test_copy_page
 
 ;extern KERNEL_PAGE_DIR
 
@@ -48,12 +49,6 @@ start_rm_len equ    $ - start_rm_msg
 
 start_pm_msg db     'Iniciando kernel en Modo Protegido'
 start_pm_len equ    $ - start_pm_msg
-
-
-;TEST_copy_page
-src_test_copy times 4096 db 0xf
-dst_test_copy times 4096 db 0xa 
-;---------------
 
 
 ;;
@@ -167,11 +162,9 @@ modo_protegido:
     ;int 0x20 ;deberia ser la interrupcion de clock
     
     ; espacio de pruebas
-    ;src
-    push src_test_copy
-    ;dst
-    push dst_test_copy
-    call copy_page
+    .prueba:
+    call test_copy_page
+    ; ------------------
 
     ; Ciclar infinitamente 
     .ciclo:

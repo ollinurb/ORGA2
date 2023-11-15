@@ -14,6 +14,12 @@
 
 3. Al momento de realizar un cambio de contexto el procesador va almacenar el estado actual de acuerdo al selector indicado en el registro TR y ha de restaurar aquel almacenado en la TSS cuyo selector se asigna en el jmp far. ¿Qué consideraciones deberíamos tener para poder realizar el primer cambio de contexto? ¿Y cuáles cuando no tenemos tareas que ejecutar o se encuentran todas suspendidas?
     - Aca entra en juego la task inicial y la task idle.
+    - Primero al iniciar el kernel hay que cargar la tarea inicial. Se hace LTR para cargar un parametro de 16bits con el selector de la tarea en la GDT.
+    - Luego hay que saltar a la tarea IDLE. La forma de hacerlo es saltar al selector con un JMP y el valor que pongamos en offset es ignorado (podemos poner 0).
+    - JMP SELECTOR_TAREA_IDLE:0
+    - Esto va a cambiar el valor del registro TR apuntando a la TSS de la tarea IDLE y producir el cambio de contexto.
+    - Saltar a una tarea es algo que lo va hacer el Sistema Operativo en nivel 0. 
+
 
 4.  ¿Qué hace el scheduler de un Sistema Operativo? ¿A qué nos referimos con que usa una política?
     - El scheduler orquesta las distintas tareas que se ejecutan secuencialmente siguiendo una serie de politicas que evaluan distintas variables.
@@ -25,4 +31,4 @@
         - Paralelismo
 
 5. En un sistema de una única CPU, ¿cómo se hace para que los programas parezcan ejecutarse en simultáneo?
-    - El scheduler otorga una cantidad de ciclos de clock a cada tarea que hace que a simple vista no notemos el cambio de contexto, ya que un ciclo entero de las tareas es imperceptible al ojo humano si hablamos de velocidades de clocks medidas en Mhz.
+    - El scheduler otorga una cantidad de tiempo del reloj que es imperceptible para el ojo humano. La velocidad de todo el ciclo del scheduler ocurre sin que lo notemos. 

@@ -78,6 +78,7 @@
 #define DESC_SYSTEM    0
 #define DESC_TYPE_EXECUTE_READ 10
 #define DESC_TYPE_READ_WRITE 2
+#define DESC_TYPE_32BIT_TSS 9
 
 #define DESC_P 1
 #define DESC_AVL 0
@@ -103,5 +104,52 @@
 #define KERNEL 0x00001200
 // direccion fisica del buffer de video
 #define VIDEO 0x000B8000
+// direccion fisica de la pagina de memoria compartida
+#define SHARED 0x0001D000
+/* MMU */
+/* -------------------------------------------------------------------------- */
+// Definan:
+
+//VIRT_PAGE_OFFSET(X) devuelve el offset dentro de la página, donde X es una dirección virtual
+//VIRT_PAGE_TABLE(X)  devuelve la page table entry correspondiente, donde X es una dirección virtual
+//VIRT_PAGE_DIR(X)    devuelve el page directory entry, donde X es una dirección virtual
+//CR3_TO_PAGE_DIR(X)  devuelve el page directory, donde X es el contenido del registro CR3
+//MMU_ENTRY_PADDR(X)  devuelve la dirección física de la base de un page frame o de un page table, donde X es el campo de 20 bits en una PTE o PDE
+
+// x/virt = dir (10bits)|table(10bits)|offset(12bits)
+//----------page_dir------page_table-------offset...
+
+#define VIRT_PAGE_OFFSET(X) (X & 0x00000FFF)
+#define VIRT_PAGE_TABLE(X)  ((X & 0x003FF000) >>12)
+#define VIRT_PAGE_DIR(X)    ((X & 0xFFC00000) >>22)
+#define CR3_TO_PAGE_DIR(X)  (X & 0xFFFFF000)
+#define MMU_ENTRY_PADDR(X)  (X << 12)
+
+#define MMU_P (1 << 0)
+#define MMU_W (1 << 1)
+#define MMU_U (1 << 2)
+
+#define PAGE_SIZE 4096
+
+// direccion virtual del codigo
+#define TASK_CODE_VIRTUAL 0x08000000
+#define TASK_CODE_PAGES   2
+#define TASK_STACK_BASE   0x08003000
+#define TASK_SHARED_PAGE  0x08003000
+
+// direccion virtual de memoria compartida on demand
+#define ON_DEMAND_MEM_START_VIRTUAL    0x07000000
+#define ON_DEMAND_MEM_END_VIRTUAL      0x07000FFF
+#define ON_DEMAND_MEM_START_PHYSICAL   0x03000000
+
+/* Direcciones fisicas de directorios y tablas de paginas del KERNEL */
+/* -------------------------------------------------------------------------- */
+#define KERNEL_PAGE_DIR     (0x00025000)
+#define KERNEL_PAGE_TABLE_0 (0x00026000)
+#define KERNEL_STACK        (0x00025000)
+
+
+#define KERNEL_DIRECTORY
 
 #endif //  __DEFINES_H__
+

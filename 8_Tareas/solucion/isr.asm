@@ -200,14 +200,7 @@ _isr33:
     add esp, 4
     popad
     iret
-
-
-;; Rutinas de atención de las SYSCALLS
-;; -------------------------------------------------------------------------- ;;
-
-global _isr88
-; Syscall para que una tarea dibuje en su pantalla
-_isr88:
+selector
   pushad
   push eax
   call tasks_syscall_draw

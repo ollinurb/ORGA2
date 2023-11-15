@@ -15,7 +15,7 @@ extern IDT_DESC
 extern idt_init
 extern pic_reset
 extern pic_enable
-
+extern tss_init
 
 ; COMPLETAR - Definan correctamente estas constantes cuando las necesiten
 
@@ -80,11 +80,17 @@ start:
 
     ; COMPLETAR - Setear el bit PE del registro CR0
 
+    ; Habilitacion de paginacion
+    
     mov eax, cr0
     
     or eax, 1
 
     mov cr0, eax
+
+    ;Carga de tarea inicial en Kernel
+
+    call tss_init
 
     ; COMPLETAR - Saltar a modo protegido (far jump)
     ; (recuerden que un far jmp se especifica como jmp CS_selector:address)

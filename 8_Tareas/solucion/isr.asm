@@ -208,6 +208,11 @@ selector
   popad
   iret
 
+global _isr88
+_isr88:
+  mov eax, 0x58 ; agregamos esto de nuestro taller
+  iret  
+
 global _isr98
 _isr98:
   mov eax, 0x62

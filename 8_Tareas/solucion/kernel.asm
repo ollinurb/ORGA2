@@ -17,6 +17,8 @@ extern pic_reset
 extern pic_enable
 extern tss_init
 
+extern mmu_init_kernel_dir ; pusimos esto por diferencias con paginacion
+
 ; COMPLETAR - Definan correctamente estas constantes cuando las necesiten
 
 %define GDT_IDX_CODE_0 1
@@ -80,17 +82,11 @@ start:
 
     ; COMPLETAR - Setear el bit PE del registro CR0
 
-    ; Habilitacion de paginacion
-    
     mov eax, cr0
     
     or eax, 1
 
     mov cr0, eax
-
-    ;Carga de tarea inicial en Kernel
-
-    call tss_init
 
     ; COMPLETAR - Saltar a modo protegido (far jump)
     ; (recuerden que un far jmp se especifica como jmp CS_selector:address)
@@ -136,6 +132,27 @@ modo_protegido:
     ;Inicializar interrupciones / PIC
     call pic_reset
     call pic_enable
+
+    ;inicializamos CR3
+
+    call mmu_init_kernel_dir
+
+    mov cr3, eax
+
+    ;activamos paginación
+
+    mov eax, cr0
+
+    or eax, 0x8000 ;activar bit CR0.PG
+
+    mov cr0, eax
+
+    ; agregar tss de tareas iniciales a gdt
+
+    call tss_init
+
+    ;activamos interrupciones
+
     sti
 
     ;aca podriamos testear interrupciones usando la isntruccion int

@@ -59,6 +59,8 @@
 #define GDT_DATA_3_SEL (GDT_IDX_DATA_3 << 3) | (TI_SEL << 2) | RPL_3
 #define GDT_VIDEO_SEL (GDT_IDX_VIDEO << 3) | (TI_SEL << 2) | RPL_0
 
+#define INITIAL_TASK_SEL (GDT_IDX_TASK_INITIAL << 3) | (TI_SEL << 2) | DPL_3;
+
 // Macros para trabajar con segmentos de la GDT.
 
 // SEGM_LIMIT_4KIB es el limite de segmento visto como bloques de 4KIB

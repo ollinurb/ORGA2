@@ -17,6 +17,9 @@ extern pic_reset
 extern pic_enable
 extern tss_init
 
+
+extern tasks_screen_draw
+
 extern mmu_init_kernel_dir ; pusimos esto por diferencias con paginacion
 
 ; COMPLETAR - Definan correctamente estas constantes cuando las necesiten
@@ -28,10 +31,20 @@ extern mmu_init_kernel_dir ; pusimos esto por diferencias con paginacion
 %define RPL_3 11b
 %define RPL_0 00b
 
+
 %define CS_RING_0_SEL (GDT_IDX_CODE_0 << 3) | (TI_SEL << 2) | RPL_0
 %define DS_RING_0_SEL (GDT_IDX_DATA_0 << 3) | (TI_SEL << 2) | RPL_0
 
 %define STACK_BASE 0x25000
+
+%define GDT_IDX_TASK_INITIAL      11
+%define GDT_IDX_TASK_IDLE         12
+
+
+%define INITIAL_TASK_SEL (GDT_IDX_TASK_INITIAL << 3)
+%define IDLE_TASK_SEL (GDT_IDX_TASK_IDLE << 3)
+;seguimos la forma en la que se hicieron los defines de task sel
+
 
 BITS 16
 ;; Saltear seccion de datos
@@ -46,6 +59,8 @@ start_rm_len equ    $ - start_rm_msg
 start_pm_msg db     'Iniciando kernel en Modo Protegido'
 start_pm_len equ    $ - start_pm_msg
 
+sched_initial_task_offset:     dd 0xFFFFFFFF
+sched_initial_task_selector:   dw 0xFFFF
 ;;
 ;; Seccion de código.
 ;; -------------------------------------------------------------------------- ;;
@@ -151,9 +166,20 @@ modo_protegido:
 
     call tss_init
 
-    ;activamos interrupciones
+    call tasks_screen_draw
+    
+    .d:
+    mov ax, INITIAL_TASK_SEL  ; lo hicimos asi porque [INITIAL_TASK_SEL] no funcionaba
+    ltr ax
 
-    sti
+    mov ax, IDLE_TASK_SEL
+    mov word [sched_initial_task_selector], ax
+
+    jmp far [sched_initial_task_offset]  ; saltamos aca porque offset tiene el selector y la basura para completar los 48bits
+
+    ;activamos interrupciones (edit taller8: ya no necesitamos este sti porque activamos las interrupciones en el contexto de la tarea idle, a la que saltamos al final)
+
+    ; sti
 
     ;aca podriamos testear interrupciones usando la isntruccion int
     ;.test_int_reloj:

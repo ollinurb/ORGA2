@@ -170,3 +170,5 @@ string_proc_list_concat_asm:
     push r12
     push rbp
     ret
+
+;tiene un bug en algun lado, no llegue a encontrarlo

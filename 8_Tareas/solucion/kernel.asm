@@ -16,7 +16,8 @@ extern idt_init
 extern pic_reset
 extern pic_enable
 extern tss_init
-
+extern sched_init
+extern tasks_init
 
 extern tasks_screen_draw
 
@@ -165,9 +166,13 @@ modo_protegido:
     ; agregar tss de tareas iniciales a gdt
 
     call tss_init
+    
+    call sched_init
+
+    call tasks_init
 
     call tasks_screen_draw
-    
+
     .d:
     mov ax, INITIAL_TASK_SEL  ; lo hicimos asi porque [INITIAL_TASK_SEL] no funcionaba
     ltr ax

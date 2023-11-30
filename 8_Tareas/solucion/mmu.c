@@ -213,7 +213,7 @@ paddr_t mmu_init_task_dir(paddr_t phy_start) {
 	// hacer el identity mapping: en task_pd hay que linkear la pde con la kpt
 
 	// pd_entry_t* pde_ptr = (pd_entry_t*) (pd + VIRT_PAGE_DIR(virt) * 4);
-	pd_entry_t* task_kernel_pde = task_pd; //c
+	pd_entry_t* task_kernel_pde = (pd_entry_t*) task_pd; //c
 	task_kernel_pde->attrs = MMU_P | MMU_W;
 	task_kernel_pde->pt = KERNEL_PAGE_TABLE_0 >> 12;
 

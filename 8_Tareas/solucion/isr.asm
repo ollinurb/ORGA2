@@ -200,13 +200,6 @@ _isr33:
     add esp, 4
     popad
     iret
-selector
-  pushad
-  push eax
-  call tasks_syscall_draw
-  add esp, 4
-  popad
-  iret
 
 global _isr88
 _isr88:

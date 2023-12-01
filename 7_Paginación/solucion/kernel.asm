@@ -17,6 +17,7 @@ extern pic_reset
 extern pic_enable
 extern mmu_init_kernel_dir
 extern test_copy_page
+extern mmu_init_task_dir
 
 ;extern KERNEL_PAGE_DIR
 
@@ -34,8 +35,10 @@ extern test_copy_page
 
 %define STACK_BASE 0x25000
 
+%define PAGE_FAULT_ONDEMAND_TEST 0x18000
 
 
+%define KERNEL_PAGE_DIR 0x00025000
 
 BITS 16
 ;; Saltear seccion de datos
@@ -148,7 +151,7 @@ modo_protegido:
 
     mov eax, cr0
 
-    or eax, 0x8000 ;activar bit CR0.PG
+    or eax, 0x80000000 ;activar bit CR0.PG
 
     mov cr0, eax
 
@@ -166,6 +169,19 @@ modo_protegido:
     call test_copy_page     ;test que no funciona
     ; ------------------
 
+
+    mov eax, PAGE_FAULT_ONDEMAND_TEST
+    push eax
+    call mmu_init_task_dir
+    mov cr3, eax
+
+    mov eax, 0x07000005
+    mov byte [eax], 5
+    mov byte [eax], 7
+
+    mov eax, KERNEL_PAGE_DIR
+    mov cr3, eax
+    
     ; Ciclar infinitamente 
     .ciclo:
     int 88

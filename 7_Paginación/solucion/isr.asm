@@ -15,6 +15,7 @@ extern pic_finish1
 extern kernel_exception
 extern process_scancode
 extern pic_disable
+extern page_fault_handler
 
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
@@ -109,13 +110,36 @@ ISRE 10
 ISRE 11
 ISRE 12
 ISRE 13
-ISRE 14
 ISRNE 15
 ISRNE 16
 ISRE 17
 ISRNE 18
 ISRNE 19
 ISRNE 20
+
+
+global _isr14
+
+_isr14:
+	; Estamos en un page fault.
+	pushad
+    ; COMPLETAR: llamar rutina de atención de page fault, pasandole la dirección que se intentó acceder
+    mov eax, cr2
+    push eax
+    call page_fault_handler
+    cmp al, 1
+    je .fin    
+    .ring0_exception:
+	; Si llegamos hasta aca es que cometimos un page fault fuera del area compartida.
+    call kernel_exception
+    jmp $
+
+    .fin:
+    add esp, 4  ;por el pusheo de cr2
+	popad
+	add esp, 4 ; error code
+	iret
+
 
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;

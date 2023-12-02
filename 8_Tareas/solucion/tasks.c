@@ -30,6 +30,7 @@ typedef enum {
  * Array que nos permite mapear un tipo de tarea a la dirección física de su
  * código.
  */
+
 static paddr_t task_code_start[2] = {
     [TASK_A] = TASK_A_CODE_START,
     [TASK_B] = TASK_B_CODE_START,
@@ -164,7 +165,7 @@ void tasks_screen_draw(void) {
   print("Tarea 1 - A",  3,  0, C_FG_WHITE | C_BG_BLUE);
   print("Tarea 2 - A", 43,  0, C_FG_WHITE | C_BG_BLUE);
   print("Tarea 3 - A",  3, 25, C_FG_WHITE | C_BG_RED);
-  print("Tarea 2 - B", 43, 25, C_FG_WHITE | C_BG_RED);
+  print("Tarea 4 - B", 43, 25, C_FG_WHITE | C_BG_RED);
   // Tamanio
   print("38x23", 17, 12, C_FG_WHITE | C_BG_BLUE);
   print("38x23", 57, 12, C_FG_WHITE | C_BG_BLUE);
@@ -180,8 +181,7 @@ void tasks_screen_draw(void) {
 void tasks_input_process(uint8_t scancode) {
   uint8_t* keyboard_state = (uint8_t*) &ENVIRONMENT->keyboard;
   keyboard_state[scancode & 0x7F] = (scancode & 0x80) == 0;
-}
-
+} 
 /**
  * Actualiza las estructuras compartidas a las tareas al ocurrir un tick del
  * reloj.

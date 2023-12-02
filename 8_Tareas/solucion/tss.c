@@ -52,6 +52,7 @@ gdt_entry_t tss_gdt_entry_for_task(tss_t* tss) {
 /**
  * Define el valor de la tss para el indice task_id
  */
+
 void tss_set(tss_t tss, int8_t task_id) {
   kassert(task_id >= 0 && task_id < MAX_TASKS, "Invalid task_id");
 
@@ -94,11 +95,6 @@ tss_t tss_create_user_task(paddr_t code_start) {
  * Inicializa las primeras entradas de tss (inicial y idle)
  */
 void tss_init(void) {
-/*ENUNCIADO
-  // COMPLETAR
-  gdt[GDT_IDX_TASK_IDLE] = tss_gdt_entry_for_task(??);
-  gdt[GDT_IDX_TASK_INITIAL] = ??;
-END*/
   gdt[GDT_IDX_TASK_IDLE] = tss_gdt_entry_for_task(&tss_idle);
   gdt[GDT_IDX_TASK_INITIAL] = tss_gdt_entry_for_task(&tss_initial);
 }

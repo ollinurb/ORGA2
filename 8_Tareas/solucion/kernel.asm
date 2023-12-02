@@ -22,6 +22,10 @@ extern tasks_init
 extern tasks_screen_draw
 
 extern mmu_init_kernel_dir ; pusimos esto por diferencias con paginacion
+extern mmu_init_task_dir
+
+extern test_copy_page
+
 
 ; COMPLETAR - Definan correctamente estas constantes cuando las necesiten
 
@@ -44,8 +48,18 @@ extern mmu_init_kernel_dir ; pusimos esto por diferencias con paginacion
 
 %define INITIAL_TASK_SEL (GDT_IDX_TASK_INITIAL << 3)
 %define IDLE_TASK_SEL (GDT_IDX_TASK_IDLE << 3)
+
 ;seguimos la forma en la que se hicieron los defines de task sel
 
+
+;directorios
+%define KERNEL_PAGE_DIR 0x00025000
+
+;tests
+%define PAGE_FAULT_ONDEMAND_TEST 0x18000
+
+;para controlar velocidad del clock
+%define DIVISOR 65536
 
 BITS 16
 ;; Saltear seccion de datos
@@ -153,13 +167,14 @@ modo_protegido:
 
     call mmu_init_kernel_dir
 
+
     mov cr3, eax
 
     ;activamos paginación
 
     mov eax, cr0
 
-    or eax, 0x8000 ;activar bit CR0.PG
+    or eax, 0x80000000 ;activar bit CR0.PG
 
     mov cr0, eax
 
@@ -170,8 +185,15 @@ modo_protegido:
     call sched_init
 
     call tasks_init
-
+    
     call tasks_screen_draw
+
+
+    ;habria que speedear el clock aca.
+    mov ax, DIVISOR
+    out 0x40, al
+    rol ax, 8
+    out 0x40, al
 
     .d:
     mov ax, INITIAL_TASK_SEL  ; lo hicimos asi porque [INITIAL_TASK_SEL] no funcionaba

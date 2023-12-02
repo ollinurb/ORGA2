@@ -187,7 +187,6 @@ void copy_page(paddr_t dst_addr, paddr_t src_addr) {
 	mmu_unmap_page(rcr3(), DST_VIRT_PAGE);	// por que desmapeamos las direcciones si se podrian usar? intuimos que para no ocupar memoria innecesariamente. Pero una pagina parece muy poco
 	mmu_unmap_page(rcr3(), SRC_VIRT_PAGE);
 	
-	tlbflush();
 }
 
  /**
@@ -199,35 +198,24 @@ paddr_t mmu_init_task_dir(paddr_t phy_start) {
 	// hacer un pd
 	paddr_t task_pd = mmu_next_free_kernel_page();
 
+	//identity mapping
 	zero_page(task_pd);
 
-	tlbflush();
-
-	// cambiamos cr3 ahora
-	
-	// funcion de assembler que cambia el cr3
-	uint32_t task_cr3 = (task_pd & 0xfffff000);   // teoricamente innecesario pero por las dudas y declaratividad ;)
-	
-	lcr3(task_cr3);
-
-	// hacer el identity mapping: en task_pd hay que linkear la pde con la kpt
-
-	// pd_entry_t* pde_ptr = (pd_entry_t*) (pd + VIRT_PAGE_DIR(virt) * 4);
-	pd_entry_t* task_kernel_pde = (pd_entry_t*) task_pd; //c
-	task_kernel_pde->attrs = MMU_P | MMU_W;
-	task_kernel_pde->pt = KERNEL_PAGE_TABLE_0 >> 12;
+  	for (size_t i = 0; i < 1024; i++){
+		mmu_map_page(task_pd, i*PAGE_SIZE, i*PAGE_SIZE, MMU_W | MMU_P);
+	}
 
 	// mappear las paginas de usuario al codigo, stack y shared del programa
-	mmu_map_page(rcr3(), TASK_CODE_VIRTUAL, phy_start, MMU_U | MMU_P);
-	mmu_map_page(rcr3(), TASK_CODE_VIRTUAL + PAGE_SIZE, phy_start + PAGE_SIZE, MMU_U | MMU_P);
+	mmu_map_page(task_pd, TASK_CODE_VIRTUAL, phy_start, MMU_U | MMU_P);
+	mmu_map_page(task_pd, TASK_CODE_VIRTUAL + PAGE_SIZE, phy_start + PAGE_SIZE, MMU_U | MMU_P);
 
 	// stack (le restamos page_size a la pagina de stack porque la macro marca el final o base, y este crece para arriba)
-	mmu_map_page(rcr3(), TASK_STACK_BASE - PAGE_SIZE, mmu_next_free_user_page(), MMU_W | MMU_U | MMU_P);
+	mmu_map_page(task_pd, TASK_STACK_BASE - PAGE_SIZE, mmu_next_free_user_page(), MMU_W | MMU_U | MMU_P);
 
 	// shared
-	mmu_map_page(rcr3(), TASK_SHARED_PAGE, SHARED, MMU_U | MMU_P);
+	mmu_map_page(task_pd, TASK_SHARED_PAGE, SHARED, MMU_U | MMU_P);
 
-	return (paddr_t)task_cr3;
+	return task_pd;
 }
 
 // COMPLETAR: devuelve true si se atendió el page fault y puede continuar la ejecución 
@@ -237,7 +225,7 @@ bool page_fault_handler(vaddr_t virt) {
 	// Chequeemos si el acceso fue dentro del area on-demand
 	// En caso de que si, mapear la pagina
 	
-	if (ON_DEMAND_MEM_START_VIRTUAL < virt && virt < ON_DEMAND_MEM_END_VIRTUAL) {
+	if (ON_DEMAND_MEM_START_VIRTUAL <= virt && virt <= ON_DEMAND_MEM_END_VIRTUAL) {
 		
 		mmu_map_page(rcr3(), virt, ON_DEMAND_MEM_START_PHYSICAL, MMU_W | MMU_U | MMU_P);	
 		
@@ -251,18 +239,17 @@ void test_copy_page(){
 	paddr_t pag1 = mmu_next_free_kernel_page();
 	paddr_t pag2 = mmu_next_free_kernel_page();
 
-	((uint32_t*)pag1)[0] = 9999;
-	((uint32_t*)pag2)[0] = 5555;
+	vaddr_t src = SRC_VIRT_PAGE;
+	vaddr_t dst = DST_VIRT_PAGE;
+	
+	mmu_map_page(rcr3(), src, pag1, MMU_W | MMU_P);
+	mmu_map_page(rcr3(), dst, pag2, MMU_P);
+
+	((uint32_t*)src)[0] = 9999;
+	((uint32_t*)dst)[0] = 5555;
+
+	mmu_unmap_page(rcr3(), src);
+	mmu_unmap_page(rcr3(), dst);
 
 	copy_page((paddr_t)pag1, (paddr_t) pag2);
-
-//	mmu_map_page(rcr3(), src, pag1, MMU_U | MMU_P);
-//	mmu_map_page(rcr3(), dst, pag2, MMU_P);
-//
-//	kassert( ((uint32_t*)src)[0] != ((uint32_t*)dst)[0], "No esta funcionando correctamente la funcion");
-//
-//	mmu_unmap_page(rcr3(), src);
-//	mmu_unmap_page(rcr3(), dst);
-
-	return;
 }

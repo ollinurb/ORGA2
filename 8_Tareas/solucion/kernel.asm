@@ -59,7 +59,7 @@ extern test_copy_page
 %define PAGE_FAULT_ONDEMAND_TEST 0x18000
 
 ;para controlar velocidad del clock
-%define DIVISOR 65536
+%define DIVISOR 0x3000
 
 BITS 16
 ;; Saltear seccion de datos
@@ -192,7 +192,7 @@ modo_protegido:
     ;habria que speedear el clock aca.
     mov ax, DIVISOR
     out 0x40, al
-    rol ax, 4           ; J: LO CAMBIÉ, originalmente era 8 pero se hacia lento para ver el programa
+    rol ax, 8        ; J: LO CAMBIÉ, originalmente era 8 pero se hacia lento para ver el programa
     out 0x40, al
 
     .d:

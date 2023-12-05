@@ -186,13 +186,13 @@ modo_protegido:
 
     call tasks_init
     
-;    call tasks_screen_draw
+    ; call tasks_screen_draw
 
 
     ;habria que speedear el clock aca.
     mov ax, DIVISOR
     out 0x40, al
-    rol ax, 8
+    rol ax, 4           ; J: LO CAMBIÉ, originalmente era 8 pero se hacia lento para ver el programa
     out 0x40, al
 
     .d:
@@ -201,27 +201,17 @@ modo_protegido:
 
     mov ax, IDLE_TASK_SEL
     mov word [sched_initial_task_selector], ax
+
     jmp far [sched_initial_task_offset]  ; saltamos aca porque offset tiene el selector y la basura para completar los 48bits
 
+    ;activamos interrupciones (edit taller8: ya no necesitamos este sti porque activamos las interrupciones en el contexto de la tarea idle, a la que saltamos al final)
+
+    ; sti
+
+    ;aca podriamos testear interrupciones usando la isntruccion int
+    ;.test_int_reloj:
+    ;int 0x20 ;deberia ser la interrupcion de clock
     
-    
-    ;---------- espacio de pruebas del taller de paginacion ----------
-    .prueba:
-    call test_copy_page    
-
-    mov eax, PAGE_FAULT_ONDEMAND_TEST
-    push eax
-    call mmu_init_task_dir
-
-    ;page fault test
-    mov cr3, eax
-
-    mov eax, 0x07000005
-    mov byte [eax], 5
-    mov byte [eax], 7
-
-    mov eax, KERNEL_PAGE_DIR
-    mov cr3, eax
 
     ; Ciclar infinitamente 
     .ciclo:

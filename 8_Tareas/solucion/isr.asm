@@ -175,7 +175,7 @@ _isr32:
     call next_clock
     ; 2. Realizamos el cambio de tareas en caso de ser necesario
     call sched_next_task
-    cmp ax, 0
+    cmp ax, 0              
     je .fin
 
     str bx ;loads tr into bx
@@ -209,9 +209,18 @@ _isr33:
     popad
     iret
 
+
+;; Rutinas de atención de las SYSCALLS
+;; -------------------------------------------------------------------------- ;;
+
 global _isr88
+; Syscall para que una tarea dibuje en su pantalla
 _isr88:
-  mov eax, 0x58 ; agregamos esto de nuestro taller
+  pushad
+  push eax
+  call tasks_syscall_draw
+  add esp, 4
+  popad
   iret  
 
 global _isr98
